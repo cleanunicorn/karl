@@ -17,9 +17,10 @@ jobs:
           - v1-dependencies-			
 
       - run:
-        command: |
-          sudo pip install pipenv
-          pipenv install
+          name: Install dependencies
+          command: |
+            sudo pip install pipenv
+            pipenv install
 
       - run:
           name: Black style check
@@ -33,7 +34,7 @@ jobs:
           working_directory: ~/karl
 
       - store_test_results:
-        path: test-results
+          path: test-results
       - store_artifacts:
-        path: test-results
-        destination: tr1
+          path: test-results
+          destination: tr1
