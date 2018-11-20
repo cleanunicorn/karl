@@ -22,8 +22,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo pip install pipenv
-            pipenv install
+            pip install --user -r requirements.txt
 
       - run:
           name: Black style check
