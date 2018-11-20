@@ -7,20 +7,16 @@ class Karl:
     web3 = None
     blockNumber = None
 
-    def __init__(self,
-        mythril=None,
-        web3=None,
-        blockNumber=None,
-    ):
+    def __init__(self, mythril=None, web3=None, blockNumber=None):
         """
             Provide the initialized Mythril object
         """
         if mythril is None:
-            raise(Exception("Must provide a valid Mythril initialized interface"))
+            raise (Exception("Must provide a valid Mythril initialized interface"))
 
         if web3 is None:
             raise (Exception("Must provide a valid web3 initialized interface"))
-            
+
         if blockNumber is None:
             self.blockNumber = web3.eth.blockNumber
 
@@ -31,10 +27,7 @@ class Karl:
         print("Running")
 
         try:
-            block = self.web3.eth.getBlock(
-                self.blockNumber,
-                full_transactions=True,
-            )
+            block = self.web3.eth.getBlock(self.blockNumber, full_transactions=True)
             print(block)
             # address = "0x74FC6891EF3c2B4D22F594FDD9DeA5c9F1a123a9"
             # self.mythril.load_from_address(address)

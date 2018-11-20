@@ -24,10 +24,7 @@ def main():
 
     try:
         # Initialize Mythril
-        myth = Mythril(
-            onchain_storage_access=True,
-            enable_online_lookup=True
-        )
+        myth = Mythril(onchain_storage_access=True, enable_online_lookup=True)
         myth.set_api_rpc(rpc=args.rpc, rpctls=args.rpctls)
 
         # Initialize Web3 client
@@ -37,7 +34,7 @@ def main():
         else:
             m = re.match(r"infura-(.*)", args.rpc)
             if m and m.group(1) in ["mainnet", "rinkeby", "kovan", "ropsten"]:
-                web3rpc = ("https://" + m.group(1) + ".infura.io")
+                web3rpc = "https://" + m.group(1) + ".infura.io"
             else:
                 try:
                     host, port = args.rpc.split(":")
@@ -46,17 +43,22 @@ def main():
                     else:
                         web3rpc = "http://" + host + ":" + port
                 except ValueError:
-                    raise Exception("Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(args.rpc))
-        
+                    raise Exception(
+                        "Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
+                            args.rpc
+                        )
+                    )
+
         if web3rpc is None:
-            raise Exception("Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(args.rpc))
+            raise Exception(
+                "Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
+                    args.rpc
+                )
+            )
 
-        web3 = Web3(Web3.HTTPProvider(web3rpc, request_kwargs={'timeout': 60}))
+        web3 = Web3(Web3.HTTPProvider(web3rpc, request_kwargs={"timeout": 60}))
 
-        karl = Karl(
-            mythril=myth,
-            web3=web3,
-        )
+        karl = Karl(mythril=myth, web3=web3)
 
         karl.run()
 
