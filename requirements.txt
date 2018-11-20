@@ -10,7 +10,7 @@ awscli==1.16.57
 black==18.9b0
 bleach==3.0.2
 botocore==1.12.47
-btrfsutil==1.0.0
+btrfs==1.0.0
 CacheControl==0.12.5
 cached-property==1.5.1
 capstone==3.0.5.post1
