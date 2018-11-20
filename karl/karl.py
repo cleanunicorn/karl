@@ -7,4 +7,3 @@ class Karl:
         """
         """
         print("Initialized!")
-        
