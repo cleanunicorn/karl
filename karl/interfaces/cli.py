@@ -29,5 +29,6 @@ def main():
     except Exception as e:
         print("[CLI] Exception:", e)
 
+
 if __name__ == "__main__":
     main()
