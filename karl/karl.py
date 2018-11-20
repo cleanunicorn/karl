@@ -1,48 +1,118 @@
+import time
+import re
+from mythril.mythril import Mythril
+from web3 import Web3
+
+
 class Karl:
     """
     Karl main interface class.
     """
 
-    mythril = None
+    rpc = None
+    rpctls = None
     web3 = None
     blockNumber = None
 
-    def __init__(self, mythril=None, web3=None, blockNumber=None):
+    def __init__(self, rpc=None, rpctls=False, blockNumber=None):
         """
-            Provide the initialized Mythril object
+            Initialize Karl with the received parameters
         """
-        if mythril is None:
-            raise (Exception("Must provide a valid Mythril initialized interface"))
+        if rpc is None:
+            raise (
+                Exception("Must provide a valid --rpc connection to an Ethereum node")
+            )
 
-        if web3 is None:
+        self.rpc = rpc
+        self.rpctls = rpctls
+
+        # Init web3 client
+        web3rpc = None
+        if rpc == "ganache":
+            web3rpc = "http://127.0.0.1:8545"
+        else:
+            m = re.match(r"infura-(.*)", rpc)
+            if m and m.group(1) in ["mainnet", "rinkeby", "kovan", "ropsten"]:
+                web3rpc = "https://" + m.group(1) + ".infura.io"
+            else:
+                try:
+                    host, port = rpc.split(":")
+                    if rpctls:
+                        web3rpc = "https://" + host + ":" + port
+                    else:
+                        web3rpc = "http://" + host + ":" + port
+                except ValueError:
+                    raise Exception(
+                        "Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
+                            rpc
+                        )
+                    )
+        if web3rpc is None:
+            raise Exception(
+                "Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
+                    rpc
+                )
+            )
+        self.web3 = Web3(Web3.HTTPProvider(web3rpc, request_kwargs={"timeout": 60}))
+        if self.web3 is None:
             raise (Exception("Must provide a valid web3 initialized interface"))
 
         if blockNumber is None:
-            self.blockNumber = web3.eth.blockNumber
+            self.blockNumber = self.web3.eth.blockNumber
 
-        self.mythril = mythril
-        self.web3 = web3
-
-    def run(self):
+    def run(self, forever=True):
         print("Running")
 
-        try:
-            block = self.web3.eth.getBlock(self.blockNumber, full_transactions=True)
-            print(block)
-            # address = "0x74FC6891EF3c2B4D22F594FDD9DeA5c9F1a123a9"
-            # self.mythril.load_from_address(address)
-            # report = self.mythril.fire_lasers(
-            #     strategy='dfs',
-            #     modules=['ether_thief', 'suicide'],
-            #     address=address,
-            #     execution_timeout=45,
-            #     create_timeout=10,
-            #     max_depth=22,
-            #     transaction_count=2,
-            #     verbose_report=True,
-            # )
+        if forever:
+            try:
+                while True:
+                    block = self.web3.eth.getBlock(
+                        self.blockNumber, full_transactions=True
+                    )
 
-            # print("Found {} issues".format(len(report.issues)))
-            # print(report.as_json())
-        except Exception as e:
-            print("[Karl] Exception:", e)
+                    # If new block is not yet mined sleep and retry
+                    if block is None:
+                        time.sleep(5)
+                        continue
+
+                    # print(block)
+                    print("Scraping block {}".format(block["number"]))
+
+                    # Next block to scrape
+                    self.blockNumber += 1
+
+                    # For each transaction get the newly created accounts
+                    for t in block["transactions"]:
+                        if (not t["to"]) or (t["to"] == "0x0"):
+                            try:
+                                myth = Mythril(
+                                    onchain_storage_access=True,
+                                    enable_online_lookup=True,
+                                )
+                                myth.set_api_rpc(rpc=self.rpc, rpctls=self.rpctls)
+
+                                receipt = self.web3.eth.getTransactionReceipt(t["hash"])
+                                address = str(receipt["contractAddress"])
+                                print("Analyzing {}".format(address))
+                                myth.load_from_address(address)
+                                report = myth.fire_lasers(
+                                    strategy="dfs",
+                                    modules=["ether_thief", "suicide"],
+                                    address=address,
+                                    execution_timeout=45,
+                                    create_timeout=10,
+                                    max_depth=22,
+                                    transaction_count=2,
+                                    verbose_report=True,
+                                )
+                                if len(report.issues):
+                                    print(
+                                        "Found {} issues for {}".format(
+                                            len(report.issues), address
+                                        )
+                                    )
+                                    print(report.as_json())
+                            except Exception as e:
+                                print("[Karl] Exception:", e)
+            except Exception as e:
+                print("[Karl] Exception:", e)
