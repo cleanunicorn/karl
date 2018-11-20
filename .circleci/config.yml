@@ -1,0 +1,30 @@
+version: 2
+jobs:
+	build:
+		working_directory: ~/karl
+		docker:
+			- image: circleci/python:3.7.1
+		steps:
+			- checkout
+
+			- run:
+				command: |
+					sudo pip install pipenv
+					pipenv install
+
+			- run:
+					name: Black style check
+					command: |
+						pip3 install --user black
+						python3 -m black --check ~/karl/
+
+			- run:
+					name: Ensuring that setup script is functional
+					command: python3 setup.py install
+					working_directory: ~/karl
+
+			- store_test_results:
+				path: test-results
+			-store_artifacts:
+				path: test-results
+				destination: tr1
