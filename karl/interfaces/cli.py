@@ -1,5 +1,6 @@
 import argparse
 from mythril.mythril import Mythril
+from karl.karl import Karl
 
 
 def main():
@@ -18,6 +19,22 @@ def main():
     )
 
     args = parser.parse_args()
+
+    try:
+        myth = Mythril(
+            onchain_storage_access=True,
+            enable_online_lookup=True
+        )
+        myth.set_api_rpc(rpc=args.rpc, rpctls=args.rpctls)
+
+        karl = Karl(
+            mythril=myth,
+        )
+
+        karl.run()
+
+    except Exception as e:
+        print("Exception ", e)
 
 
 if __name__ == "__main__":

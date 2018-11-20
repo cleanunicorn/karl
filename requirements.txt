@@ -1,1 +1,1 @@
-mythril>=0.19
+mythril>=0.19.1
