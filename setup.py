@@ -17,6 +17,11 @@ setup(
     version="0.2.3",
     license="MIT",
     author="Daniel Luca",
+
+
+
+
+    
     author_email="daniel.luca@consensys.net",
     long_description=read_file("Readme.md") if os.path.isfile("Readme.md") else "",
     packages=find_packages(exclude=["contrib", "docs", "tests"]),
