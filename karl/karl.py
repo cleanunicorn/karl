@@ -9,12 +9,17 @@ class Karl:
     Karl main interface class.
     """
 
+    # Ethereum node to connect to
     rpc = None
     rpctls = None
+    # Initialized Web3 client
     web3 = None
+    # Send results to this output (could be stdout or restful url)
+    output = None
+    # What block number to start from
     blockNumber = None
 
-    def __init__(self, rpc=None, rpctls=False, blockNumber=None):
+    def __init__(self, rpc=None, rpctls=False, blockNumber=None, output=None):
         """
             Initialize Karl with the received parameters
         """
@@ -25,6 +30,7 @@ class Karl:
 
         self.rpc = rpc
         self.rpctls = rpctls
+        self.output = output
 
         # Init web3 client
         web3rpc = None
@@ -106,12 +112,9 @@ class Karl:
                                     verbose_report=True,
                                 )
                                 if len(report.issues):
-                                    print(
-                                        "Found {} issues for {}".format(
-                                            len(report.issues), address
-                                        )
+                                    self.output.send(
+                                        report=report, contract_address=address
                                     )
-                                    print(report.as_json())
                             except Exception as e:
                                 print("[Karl] Exception:", e)
             except Exception as e:
