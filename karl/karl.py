@@ -82,33 +82,35 @@ class Karl:
 
                 # For each transaction get the newly created accounts
                 for t in block["transactions"]:
-                    if (not t["to"]) or (t["to"] == "0x0"):
-                        try:
-                            myth = Mythril(
-                                onchain_storage_access=True,
-                                enable_online_lookup=True,
-                            )
-                            myth.set_api_rpc(rpc=self.rpc, rpctls=self.rpctls)
+                    if t["to"] is None or t["to"] == "0x0":
+                        continue
 
-                            receipt = self.web3.eth.getTransactionReceipt(t["hash"])
-                            address = str(receipt["contractAddress"])
-                            print("Analyzing {}".format(address))
-                            myth.load_from_address(address)
-                            report = myth.fire_lasers(
-                                strategy="dfs",
-                                modules=["ether_thief", "suicide"],
-                                address=address,
-                                execution_timeout=45,
-                                create_timeout=10,
-                                max_depth=22,
-                                transaction_count=2,
-                                verbose_report=True,
+                    try:
+                        myth = Mythril(
+                            onchain_storage_access=True,
+                            enable_online_lookup=True,
+                        )
+                        myth.set_api_rpc(rpc=self.rpc, rpctls=self.rpctls)
+
+                        receipt = self.web3.eth.getTransactionReceipt(t["hash"])
+                        address = str(receipt["contractAddress"])
+                        print("Analyzing {}".format(address))
+                        myth.load_from_address(address)
+                        report = myth.fire_lasers(
+                            strategy="dfs",
+                            modules=["ether_thief", "suicide"],
+                            address=address,
+                            execution_timeout=45,
+                            create_timeout=10,
+                            max_depth=22,
+                            transaction_count=2,
+                            verbose_report=True,
+                        )
+                        if len(report.issues):
+                            self.output.send(
+                                report=report, contract_address=address
                             )
-                            if len(report.issues):
-                                self.output.send(
-                                    report=report, contract_address=address
-                                )
-                        except Exception as e:
-                            print("[Karl] Exception:", e)
+                    except Exception as e:
+                        print("[Karl] Exception:", e)
         except Exception as e:
             print("[Karl] Exception:", e)
