@@ -1,7 +1,7 @@
 import argparse
 import sys
 from karl.output.stdout import Stdout
-from karl.output.posturl import Posturl
+from karl.output.posturl import PostURL
 from karl.karl import Karl
 
 
@@ -42,7 +42,7 @@ def main():
                 )
                 sys.exit()
             else:
-                output_destination = Posturl(url=args.posturl)
+                output_destination = PostURL(url=args.posturl)
 
     if output_destination is None:
         print("Must pick an output destination with --output")

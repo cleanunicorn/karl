@@ -11,7 +11,7 @@ class Karl:
     Karl main interface class.
     """
 
-    def __init__(self, rpc=None, rpctls=False, blockNumber=None, output=None):
+    def __init__(self, rpc=None, rpctls=False, block_number=None, output=None):
         """
             Initialize Karl with the received parameters
         """
@@ -22,42 +22,42 @@ class Karl:
 
         # Ethereum node to connect to
         self.rpc = rpc
-        self.rpctls = rpctls
+        self.rpc_tls = rpctls
         # Send results to this output (could be stdout or restful url)
         self.output = output
 
         # Init web3 client
-        web3rpc = None
+        web3_rpc = None
         if rpc == "ganache":
-            web3rpc = "http://127.0.0.1:8545"
+            web3_rpc = "http://127.0.0.1:8545"
         else:
             m = re.match(r"infura-(.*)", rpc)
             if m and m.group(1) in ["mainnet", "rinkeby", "kovan", "ropsten"]:
-                web3rpc = "https://" + m.group(1) + ".infura.io"
+                web3_rpc = "https://" + m.group(1) + ".infura.io"
             else:
                 try:
                     host, port = rpc.split(":")
                     if rpctls:
-                        web3rpc = "https://" + host + ":" + port
+                        web3_rpc = "https://" + host + ":" + port
                     else:
-                        web3rpc = "http://" + host + ":" + port
+                        web3_rpc = "http://" + host + ":" + port
                 except ValueError:
                     raise Exception(
                         "Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
                             rpc
                         )
                     )
-        if web3rpc is None:
+        if web3_rpc is None:
             raise Exception(
                 "Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
                     rpc
                 )
             )
-        self.web3 = Web3(Web3.HTTPProvider(web3rpc, request_kwargs={"timeout": 60}))
+        self.web3 = Web3(Web3.HTTPProvider(web3_rpc, request_kwargs={"timeout": 60}))
         if self.web3 is None:
             raise (Exception("Must provide a valid web3 initialized interface"))
 
-        self.blockNumber = blockNumber or self.web3.eth.blockNumber
+        self.block_number = block_number or self.web3.eth.blockNumber
 
     def run(self, forever=True):
         print("Running")
@@ -65,7 +65,7 @@ class Karl:
         try:
             while forever:
                 block = self.web3.eth.getBlock(
-                    self.blockNumber, full_transactions=True
+                    self.block_number, full_transactions=True
                 )
 
                 # If new block is not yet mined sleep and retry
@@ -77,7 +77,7 @@ class Karl:
                 print("Scraping block {}".format(block["number"]))
 
                 # Next block to scrape
-                self.blockNumber += 1
+                self.block_number += 1
 
                 # For each transaction get the newly created accounts
                 for t in block["transactions"]:
@@ -89,7 +89,7 @@ class Karl:
                             onchain_storage_access=True,
                             enable_online_lookup=True,
                         )
-                        myth.set_api_rpc(rpc=self.rpc, rpctls=self.rpctls)
+                        myth.set_api_rpc(rpc=self.rpc, rpctls=self.rpc_tls)
 
                         receipt = self.web3.eth.getTransactionReceipt(t["hash"])
                         address = str(receipt["contractAddress"])
