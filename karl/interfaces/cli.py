@@ -1,10 +1,7 @@
 import argparse
-import re
 import sys
-from mythril.mythril import Mythril
 from karl.output.stdout import Stdout
 from karl.output.posturl import Posturl
-from web3 import Web3
 from karl.karl import Karl
 
 
