@@ -1,7 +1,6 @@
 import time
 import re
 
-from ethereum import block
 from mythril.mythril import Mythril
 from web3 import Web3
 
@@ -73,7 +72,6 @@ class Karl:
                     time.sleep(5)
                     continue
 
-                # print(block)
                 print("Scraping block {}".format(block["number"]))
 
                 # Next block to scrape
@@ -92,7 +90,7 @@ class Karl:
 
                         receipt = self.web3.eth.getTransactionReceipt(t["hash"])
                         address = str(receipt["contractAddress"])
-                        print("Analyzing {}".format(address))
+                        print("Analyzing", address)
                         myth.load_from_address(address)
                         report = myth.fire_lasers(
                             strategy="dfs",
