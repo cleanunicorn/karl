@@ -81,9 +81,8 @@ class Karl:
 
                 # For each transaction get the newly created accounts
                 for t in block["transactions"]:
-                    if t["to"] is None or t["to"] == "0x0":
+                    if t["to"] and t["to"] != "0x0":
                         continue
-
                     try:
                         myth = Mythril(
                             onchain_storage_access=True,
