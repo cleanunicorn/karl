@@ -1,5 +1,7 @@
 import time
 import re
+
+from ethereum import block
 from mythril.mythril import Mythril
 from web3 import Web3
 
@@ -23,8 +25,6 @@ class Karl:
         self.rpctls = rpctls
         # Send results to this output (could be stdout or restful url)
         self.output = output
-        # What block number to start from
-        self.blockNumber = None
 
         # Init web3 client
         web3rpc = None
@@ -57,8 +57,7 @@ class Karl:
         if self.web3 is None:
             raise (Exception("Must provide a valid web3 initialized interface"))
 
-        if blockNumber is None:
-            self.blockNumber = self.web3.eth.blockNumber
+        self.blockNumber = blockNumber or self.web3.eth.blockNumber
 
     def run(self, forever=True):
         print("Running")
