@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
+
 def read_file(fname):
     """
     return file contents
@@ -9,6 +10,7 @@ def read_file(fname):
     """
     with open(os.path.join(os.path.dirname(__file__), fname), "r") as fd:
         return fd.read()
+
 
 setup(
     name="karl",
