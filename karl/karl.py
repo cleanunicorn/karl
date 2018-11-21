@@ -63,53 +63,52 @@ class Karl:
     def run(self, forever=True):
         print("Running")
 
-        if forever:
-            try:
-                while True:
-                    block = self.web3.eth.getBlock(
-                        self.blockNumber, full_transactions=True
-                    )
+        try:
+            while forever:
+                block = self.web3.eth.getBlock(
+                    self.blockNumber, full_transactions=True
+                )
 
-                    # If new block is not yet mined sleep and retry
-                    if block is None:
-                        time.sleep(5)
-                        continue
+                # If new block is not yet mined sleep and retry
+                if block is None:
+                    time.sleep(5)
+                    continue
 
-                    # print(block)
-                    print("Scraping block {}".format(block["number"]))
+                # print(block)
+                print("Scraping block {}".format(block["number"]))
 
-                    # Next block to scrape
-                    self.blockNumber += 1
+                # Next block to scrape
+                self.blockNumber += 1
 
-                    # For each transaction get the newly created accounts
-                    for t in block["transactions"]:
-                        if (not t["to"]) or (t["to"] == "0x0"):
-                            try:
-                                myth = Mythril(
-                                    onchain_storage_access=True,
-                                    enable_online_lookup=True,
+                # For each transaction get the newly created accounts
+                for t in block["transactions"]:
+                    if (not t["to"]) or (t["to"] == "0x0"):
+                        try:
+                            myth = Mythril(
+                                onchain_storage_access=True,
+                                enable_online_lookup=True,
+                            )
+                            myth.set_api_rpc(rpc=self.rpc, rpctls=self.rpctls)
+
+                            receipt = self.web3.eth.getTransactionReceipt(t["hash"])
+                            address = str(receipt["contractAddress"])
+                            print("Analyzing {}".format(address))
+                            myth.load_from_address(address)
+                            report = myth.fire_lasers(
+                                strategy="dfs",
+                                modules=["ether_thief", "suicide"],
+                                address=address,
+                                execution_timeout=45,
+                                create_timeout=10,
+                                max_depth=22,
+                                transaction_count=2,
+                                verbose_report=True,
+                            )
+                            if len(report.issues):
+                                self.output.send(
+                                    report=report, contract_address=address
                                 )
-                                myth.set_api_rpc(rpc=self.rpc, rpctls=self.rpctls)
-
-                                receipt = self.web3.eth.getTransactionReceipt(t["hash"])
-                                address = str(receipt["contractAddress"])
-                                print("Analyzing {}".format(address))
-                                myth.load_from_address(address)
-                                report = myth.fire_lasers(
-                                    strategy="dfs",
-                                    modules=["ether_thief", "suicide"],
-                                    address=address,
-                                    execution_timeout=45,
-                                    create_timeout=10,
-                                    max_depth=22,
-                                    transaction_count=2,
-                                    verbose_report=True,
-                                )
-                                if len(report.issues):
-                                    self.output.send(
-                                        report=report, contract_address=address
-                                    )
-                            except Exception as e:
-                                print("[Karl] Exception:", e)
-            except Exception as e:
-                print("[Karl] Exception:", e)
+                        except Exception as e:
+                            print("[Karl] Exception:", e)
+        except Exception as e:
+            print("[Karl] Exception:", e)
