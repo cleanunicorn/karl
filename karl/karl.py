@@ -9,16 +9,6 @@ class Karl:
     Karl main interface class.
     """
 
-    # Ethereum node to connect to
-    rpc = None
-    rpctls = None
-    # Initialized Web3 client
-    web3 = None
-    # Send results to this output (could be stdout or restful url)
-    output = None
-    # What block number to start from
-    blockNumber = None
-
     def __init__(self, rpc=None, rpctls=False, blockNumber=None, output=None):
         """
             Initialize Karl with the received parameters
@@ -28,9 +18,13 @@ class Karl:
                 Exception("Must provide a valid --rpc connection to an Ethereum node")
             )
 
+        # Ethereum node to connect to
         self.rpc = rpc
         self.rpctls = rpctls
+        # Send results to this output (could be stdout or restful url)
         self.output = output
+        # What block number to start from
+        self.blockNumber = None
 
         # Init web3 client
         web3rpc = None
