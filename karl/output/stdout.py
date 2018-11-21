@@ -7,4 +7,4 @@ class Stdout(OutputInterface):
 
     def send(self, report=dict(), contract_address=""):
         print("Found {} issues for {}".format(len(report.issues), contract_address))
-        print(report.as_json())
+        print(report.as_text())
