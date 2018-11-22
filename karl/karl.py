@@ -90,8 +90,7 @@ class Karl:
                         continue
                     try:
                         myth = Mythril(
-                            onchain_storage_access=True,
-                            enable_online_lookup=True,
+                            onchain_storage_access=True, enable_online_lookup=True
                         )
                         myth.set_api_rpc(rpc=self.rpc, rpctls=self.rpc_tls)
 
@@ -114,10 +113,10 @@ class Karl:
                         issues_num = len(report.issues)
                         if issues_num:
                             self.logger.info("Found %s issues", issues_num)
-                            self.output.send(
-                                report=report, contract_address=address
-                            )
+                            self.output.send(report=report, contract_address=address)
                     except Exception as e:
-                        self.logger.error("[Karl] Exception: %s\n%s", e, sys.exc_info()[2])
+                        self.logger.error(
+                            "[Karl] Exception: %s\n%s", e, sys.exc_info()[2]
+                        )
         except Exception as e:
             self.logger.error("[Karl] Exception: %s\n%s", e, sys.exc_info()[2])
