@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 import os
-
+find_packages()
 
 def read_file(fname):
     """
@@ -19,8 +19,9 @@ setup(
     author="Daniel Luca",
     author_email="daniel.luca@consensys.net",
     long_description=read_file("Readme.md") if os.path.isfile("Readme.md") else "",
-    packages=find_packages(exclude=["contrib", "docs", "tests"]),
+    packages=["karl"],
+    requires=["mythril", "web3"],
     long_description_content_type="text/markdown",
     entry_points={"console_scripts": ["karl=karl.interfaces.cli:main"]},
-    credits="Bernhardt Muller",
+    credits="Bernhard Mueller",
 )

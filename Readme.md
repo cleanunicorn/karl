@@ -1,8 +1,8 @@
 # Karl
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![CircleCI](https://circleci.com/gh/ConsenSys/karl/tree/master.svg?style=shield)](https://circleci.com/gh/ConsenSys/karl) 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/056430d247d84f1ea5995f5b87766b2f)](https://app.codacy.com/app/lucadanielcostin/karl)
+[![CircleCI](https://circleci.com/gh/cleanunicorn/karl/tree/master.svg?style=shield)](https://circleci.com/gh/cleanunicorn/karl) 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/53bb3ba0ed50447698e775edd397baa7)](https://www.codacy.com/app/lucadanielcostin/karl)
 [![PyPI](https://img.shields.io/pypi/v/karl.svg)](https://pypi.org/project/karl/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
