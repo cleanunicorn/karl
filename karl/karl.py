@@ -1,8 +1,13 @@
 import time
 import re
+import logging
+import sys
 
 from mythril.mythril import Mythril
 from web3 import Web3
+
+
+logging.basicConfig(level=logging.INFO)
 
 
 class Karl:
@@ -24,6 +29,7 @@ class Karl:
         self.rpc_tls = rpctls
         # Send results to this output (could be stdout or restful url)
         self.output = output
+        self.logger = logging.getLogger("Karl")
 
         # Init web3 client
         web3_rpc = None
@@ -59,7 +65,7 @@ class Karl:
         self.block_number = block_number or self.web3.eth.blockNumber
 
     def run(self, forever=True):
-        print("Running")
+        self.logger.info("Starting scraping process")
 
         try:
             while forever:
@@ -72,7 +78,7 @@ class Karl:
                     time.sleep(5)
                     continue
 
-                print("Scraping block {}".format(block["number"]))
+                self.logger.info("Scraping block %s", block["number"])
 
                 # Next block to scrape
                 self.block_number += 1
@@ -90,8 +96,9 @@ class Karl:
 
                         receipt = self.web3.eth.getTransactionReceipt(t["hash"])
                         address = str(receipt["contractAddress"])
-                        print("Analyzing", address)
+                        self.logger.info("Analyzing %s", address)
                         myth.load_from_address(address)
+                        self.logger.info("Executing Mythril")
                         report = myth.fire_lasers(
                             strategy="dfs",
                             modules=["ether_thief", "suicide"],
@@ -103,10 +110,11 @@ class Karl:
                             verbose_report=True,
                         )
                         if len(report.issues):
+                            self.logger.info("Found %s issues", len(report.issues))
                             self.output.send(
                                 report=report, contract_address=address
                             )
                     except Exception as e:
-                        print("[Karl] Exception:", e)
+                        self.logger.error("[Karl] Exception: %s\n%s", e, sys.exc_info()[2])
         except Exception as e:
-            print("[Karl] Exception:", e)
+            self.logger.error("[Karl] Exception: %s\n%s", e, sys.exc_info()[2])
