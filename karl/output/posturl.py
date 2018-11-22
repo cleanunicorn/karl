@@ -3,11 +3,11 @@ from karl.output.output import OutputInterface
 from mythril.analysis.report import Report
 
 
-class Posturl(OutputInterface):
+class PostURL(OutputInterface):
     url = None
 
     def __init__(self, url=None):
-        print("Posturl initialized")
+        print("PostURL initialized")
         self.url = url
 
     def send(self, report: Report, contract_address=""):
