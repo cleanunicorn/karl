@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 import os
-find_packages()
+
 
 def read_file(fname):
     """
