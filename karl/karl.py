@@ -67,6 +67,7 @@ class Karl:
     def run(self, forever=True):
         self.logger.info("Starting scraping process")
 
+        # TODO: Refactor try-except statements
         try:
             while forever:
                 block = self.web3.eth.getBlock(
@@ -109,8 +110,10 @@ class Karl:
                             transaction_count=2,
                             verbose_report=True,
                         )
-                        if len(report.issues):
-                            self.logger.info("Found %s issues", len(report.issues))
+
+                        issues_num = len(report.issues)
+                        if issues_num:
+                            self.logger.info("Found %s issues", issues_num)
                             self.output.send(
                                 report=report, contract_address=address
                             )
