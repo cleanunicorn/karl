@@ -1,5 +1,6 @@
 import argparse
 import sys
+import logging
 from karl.output.stdout import Stdout
 from karl.output.posturl import PostURL
 from karl.karl import Karl
@@ -10,6 +11,7 @@ def main():
         description="Smart contract monitor using Mythril to find exploits"
     )
 
+    # Ethereum node
     rpc = parser.add_argument_group("RPC options")
     rpc.add_argument(
         "--rpc",
@@ -20,6 +22,7 @@ def main():
         "--rpctls", type=bool, default=False, help="RPC connection over TLS"
     )
 
+    # Output
     output = parser.add_argument_group("Output")
     output.add_argument(
         "--output",
@@ -29,11 +32,28 @@ def main():
     )
     output.add_argument("--posturl", help="Send results to a RESTful url")
 
+    # Verbosity
+    verbosity = parser.add_argument_group("Verbosity")
+    verbosity.add_argument(
+        "--verbose", "-v", action="count", help="Set verbosity level"
+    )
+
+    # Parse cli args
     args = parser.parse_args()
+
+    # Set verbosity
+    verbosity_levels = {1: logging.WARNING, 2: logging.INFO, 3: logging.DEBUG}
+    verbose = (
+        len(verbosity_levels)
+        if args.verbose is not None and args.verbose > len(verbosity_levels)
+        else args.verbose
+    )
 
     output_destination = None
     if args.output == "stdout":
-        output_destination = Stdout()
+        output_destination = Stdout(
+            verbosity=verbosity_levels.get(verbose, logging.NOTSET)
+        )
     else:
         if args.output == "posturl":
             if args.posturl is None:
@@ -42,15 +62,23 @@ def main():
                 )
                 sys.exit()
             else:
-                output_destination = PostURL(url=args.posturl)
+                output_destination = PostURL(
+                    url=args.posturl,
+                    verbosity=verbosity_levels.get(verbose, logging.NOTSET),
+                )
 
     if output_destination is None:
         print("Must pick an output destination with --output")
         sys.exit()
 
+    # Start Karl
     try:
-        # Start Karl
-        karl = Karl(rpc=args.rpc, rpctls=args.rpctls, output=output_destination)
+        karl = Karl(
+            rpc=args.rpc,
+            rpctls=args.rpctls,
+            output=output_destination,
+            verbosity=verbosity_levels.get(verbose, logging.NOTSET),
+        )
         karl.run(forever=True)
     except Exception as e:
         print("[CLI] Exception:", e)

@@ -20,7 +20,7 @@ setup(
     author_email="daniel.luca@consensys.net",
     long_description=read_file("Readme.md") if os.path.isfile("Readme.md") else "",
     packages=find_packages(exclude=["contrib", "docs", "tests"]),
-    requires=["mythril", "web3"],
+    requires=read_file("requirements.txt").split("\n"),
     long_description_content_type="text/markdown",
     entry_points={"console_scripts": ["karl=karl.interfaces.cli:main"]},
     credits="Bernhard Mueller",
