@@ -103,7 +103,7 @@ class Karl:
                 # For each transaction get the newly created accounts
                 for t in block.get("transactions", []):
                     # If there is no to defined or to is reported as address(0x0) a new contract is created
-                    if t.get("to", "0x0") != "0x0":
+                    if (t["to"] is not None) and (t["to"] != "0x0"):
                         continue
                     try:
                         receipt = self.web3.eth.getTransactionReceipt(t["hash"])
