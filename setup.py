@@ -23,5 +23,5 @@ setup(
     requires=read_file("requirements.txt").split("\n"),
     long_description_content_type="text/markdown",
     entry_points={"console_scripts": ["karl=karl.interfaces.cli:main"]},
-    credits="Bernhard Mueller",
+    credits=["Bernhard Mueller"],
 )
