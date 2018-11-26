@@ -3,7 +3,7 @@ from karl.output.output import OutputInterface
 
 
 class Stdout(OutputInterface):
-    def __init__(self, verbosity=logging.NOTSET):
+    def __init__(self, verbosity=logging.INFO):
         self.logger = logging.getLogger("Stdout")
         self.logger.setLevel(verbosity)
         self.logger.debug("Stdout enabled")

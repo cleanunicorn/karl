@@ -42,7 +42,8 @@ def main():
     args = parser.parse_args()
 
     # Set verbosity
-    verbosity_levels = {1: logging.WARNING, 2: logging.INFO, 3: logging.DEBUG}
+    verbosity_default = logging.INFO
+    verbosity_levels = {1: logging.DEBUG}
     verbose = (
         len(verbosity_levels)
         if args.verbose is not None and args.verbose > len(verbosity_levels)
@@ -52,7 +53,7 @@ def main():
     output_destination = None
     if args.output == "stdout":
         output_destination = Stdout(
-            verbosity=verbosity_levels.get(verbose, logging.NOTSET)
+            verbosity=verbosity_levels.get(verbose, verbosity_default)
         )
     else:
         if args.output == "posturl":
@@ -64,7 +65,7 @@ def main():
             else:
                 output_destination = PostURL(
                     url=args.posturl,
-                    verbosity=verbosity_levels.get(verbose, logging.NOTSET),
+                    verbosity=verbosity_levels.get(verbose, verbosity_default),
                 )
 
     if output_destination is None:
@@ -77,7 +78,7 @@ def main():
             rpc=args.rpc,
             rpctls=args.rpctls,
             output=output_destination,
-            verbosity=verbosity_levels.get(verbose, logging.NOTSET),
+            verbosity=verbosity_levels.get(verbose, verbosity_default),
         )
         karl.run(forever=True)
     except Exception as e:

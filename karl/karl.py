@@ -21,7 +21,7 @@ class Karl:
         rpctls=False,
         block_number=None,
         output=None,
-        verbosity=logging.NOTSET,
+        verbosity=logging.INFO,
     ):
         """
             Initialize Karl with the received parameters

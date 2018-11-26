@@ -7,7 +7,7 @@ from karl.output.exceptions import PostURLInvalidURL
 
 
 class PostURL(OutputInterface):
-    def __init__(self, url=None, verbosity=logging.NOTSET):
+    def __init__(self, url=None, verbosity=logging.INFO):
         if url.startswith("file:/"):
             raise PostURLInvalidURL("Cannot post results to file:/ locations")
         self.url = url
