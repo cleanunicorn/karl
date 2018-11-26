@@ -1,5 +1,5 @@
 # Circleci build file
-# https://circleci.com/gh/ConsenSys/karl
+# https://circleci.com/gh/cleanunicorn/karl
 version: 2
 jobs:
   build:
