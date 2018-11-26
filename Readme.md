@@ -10,8 +10,8 @@ A monitor for smart contracts that checks for security vulnerabilities
 
 ## Install
 
-```shell
-pip install --user karl
+```console
+$ pip install --user karl
 ```
 
 Will make `karl` available in your shell.
@@ -25,7 +25,7 @@ The output can be displayed in the console or POSTed to a URL.
 
 ### Help message
 
-```shell
+```console
 $ karl --help
 usage: karl [-h]
             [--rpc HOST:PORT / ganache / infura-{mainnet, rinkeby, kovan, ropsten}]
@@ -49,15 +49,14 @@ Output:
 ```
 
 Mythril modules enabled
-
-- ether_thief
-- suicide
+  - ether_thief
+  - suicide
 
 ## Examples
 
 ### Running against the main net
 
-```shell
+```console
 $ karl --rpc infura-mainnet --rpctls true      
 Stdout initialized
 Running
@@ -74,7 +73,7 @@ Analyzing 0x19427b8FD32dfEc78393517Da416bC5C583E6065
 ```
 
 ### Running against ganache with standard output enabled
-```shell
+```console
 $ karl --rpc ganache --output=stdout
 Stdout initialized
 Running
@@ -98,7 +97,7 @@ Transaction Sequence: {'1': {'calldata': '0x56885cd8', 'call_value': '0x0', 'cal
 
 ### Running against ganache with posturl enabled
 
-```shell
+```console
 $ karl --rpc ganache --output=posturl --posturl=http://localhost:8080
 Posturl initialized
 Running
