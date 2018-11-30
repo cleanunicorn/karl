@@ -21,6 +21,12 @@ def main():
     rpc.add_argument(
         "--rpctls", type=bool, default=False, help="RPC connection over TLS"
     )
+    rpc.add_argument(
+        "--block",
+        type=int,
+        help="Start from this block, otherwise start from latest",
+        metavar="NUMBER",
+    )
 
     # Output
     output = parser.add_argument_group("Output")
@@ -79,6 +85,7 @@ def main():
             rpctls=args.rpctls,
             output=output_destination,
             verbosity=verbosity_levels.get(verbose, verbosity_default),
+            block_number=args.block,
         )
         karl.run(forever=True)
     except Exception as e:
