@@ -25,7 +25,7 @@ def main():
         "--block",
         type=int,
         help="Start from this block, otherwise start from latest",
-        metavar="NUMBER"
+        metavar="NUMBER",
     )
 
     # Output
@@ -77,12 +77,6 @@ def main():
     if output_destination is None:
         print("Must pick an output destination with --output")
         sys.exit()
-
-
-
-
-
-
 
     # Start Karl
     try:
