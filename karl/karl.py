@@ -176,13 +176,11 @@ class Karl:
             )
         except BlockNumberInvalidException:
             self.logger.error(
-                "Unspecified block number to fork blockchain = {}".format(
-                    block_number)
+                "Unspecified block number to fork blockchain = {}".format(block_number)
             )
         except ContractInvalidException:
             self.logger.error(
-                "Invalid specified contract address = {}".format(
-                    contract_address)
+                "Invalid specified contract address = {}".format(contract_address)
             )
         except ReportInvalidException:
             self.logger.error("Invalid report specified {}".format(report))
