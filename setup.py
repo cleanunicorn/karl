@@ -14,7 +14,7 @@ def read_file(fname):
 
 setup(
     name="karl",
-    version="0.3.1",
+    version="0.3.2dev1",
     license="MIT",
     author="Daniel Luca",
     author_email="daniel.luca@consensys.net",
