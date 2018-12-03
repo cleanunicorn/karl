@@ -70,7 +70,8 @@ class Sandbox:
                 tx = {
                     "from": hacker,
                     "to": self.contract_address,
-                    # If a transaction has an argument that points to the hacker replace that
+                    # If a transaction has an argument that points
+                    # to the hacker replace that
                     "data": t["calldata"].replace(
                         "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef", hacker[2:]
                     ),

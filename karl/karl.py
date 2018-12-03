@@ -1,5 +1,4 @@
 import time
-import re
 import logging
 import sys
 from mythril.mythril import Mythril
@@ -64,23 +63,23 @@ class Karl:
                         web3_rpc = "http://{host}:{port}".format(host=host, port=port)
                 except ValueError:
                     raise RPCError(
-                        "Invalid RPC argument provided '{}', use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
-                            rpc
-                        )
+                        "Invalid RPC argument provided '{}', use "
+                        "'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' "
+                        "or HOST:PORT".format(rpc)
                     )
         if web3_rpc is None:
             raise RPCError(
-                "Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
-                    rpc
-                )
+                "Invalid RPC argument provided {}, use "
+                "'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' "
+                "or HOST:PORT".format(rpc)
             )
         self.web3_rpc = web3_rpc
         self.web3 = Web3(Web3.HTTPProvider(web3_rpc, request_kwargs={"timeout": 60}))
         if self.web3 is None:
             raise RPCError(
-                "Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
-                    rpc
-                )
+                "Invalid RPC argument provided {}, use "
+                "'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' "
+                "or HOST:PORT".format(rpc)
             )
 
         self.block_number = block_number or self.web3.eth.blockNumber
@@ -109,7 +108,8 @@ class Karl:
 
                 # For each transaction get the newly created accounts
                 for t in block.get("transactions", []):
-                    # If there is no to defined or to is reported as address(0x0) a new contract is created
+                    # If there is no to defined or to is reported as address(0x0)
+                    # a new contract is created
                     if (t["to"] is not None) and (t["to"] != "0x0"):
                         continue
                     try:

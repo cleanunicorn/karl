@@ -1,8 +1,6 @@
 import subprocess
 import logging
-import os
 import signal
-from web3 import Web3, HTTPProvider
 
 
 class Ganache:
