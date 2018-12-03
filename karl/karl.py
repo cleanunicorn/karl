@@ -5,6 +5,12 @@ import sys
 from mythril.mythril import Mythril
 from web3 import Web3
 from karl.exceptions import RPCError
+from karl.sandbox.sandbox import Sandbox
+from karl.sandbox.exceptions import (
+    ContractInvalidException,
+    BlockNumberInvalidException,
+    ReportInvalidException,
+)
 
 
 logging.basicConfig(level=logging.INFO)
@@ -68,6 +74,7 @@ class Karl:
                     rpc
                 )
             )
+        self.web3_rpc = web3_rpc
         self.web3 = Web3(Web3.HTTPProvider(web3_rpc, request_kwargs={"timeout": 60}))
         if self.web3 is None:
             raise RPCError(
@@ -113,7 +120,19 @@ class Karl:
                         issues_num = len(report.issues)
                         if issues_num:
                             self.logger.info("Found %s issue(s)", issues_num)
-                            self.output.send(report=report, contract_address=address)
+                            self.logger.info("Firing up sandbox tester")
+
+                            exploitable = self._run_sandbox(
+                                block_number=block.get("number", None),
+                                contract_address=address,
+                                report=report,
+                                rpc=self.web3_rpc,
+                            )
+                            if exploitable:
+                                # TODO: Nice output
+                                pass
+                            else:
+                                pass
                         else:
                             self.logger.info("No issues found")
                     except Exception as e:
@@ -128,6 +147,10 @@ class Karl:
         self.logger.info("Analyzing %s", contract_address)
         myth.load_from_address(contract_address)
         self.logger.debug("Running Mythril")
+
+        # TODO: hack to stop mythril logging
+        logging.getLogger().setLevel(logging.CRITICAL)
+
         return myth.fire_lasers(
             strategy="dfs",
             modules=["ether_thief", "suicide"],
@@ -138,3 +161,30 @@ class Karl:
             transaction_count=2,
             verbose_report=True,
         )
+
+    def _run_sandbox(
+        self, block_number=None, contract_address=None, report=None, rpc=None
+    ):
+        exploitable = False
+        try:
+            sandbox = Sandbox(
+                block_number=block_number,
+                contract_address=contract_address,
+                report=report,
+                rpc=rpc,
+                verbosity=self.logger.level,
+            )
+        except BlockNumberInvalidException:
+            self.logger.error(
+                "Unspecified block number to fork blockchain = {}".format(block_number)
+            )
+        except ContractInvalidException:
+            self.logger.error(
+                "Invalid specified contract address = {}".format(contract_address)
+            )
+        except ReportInvalidException:
+            self.logger.error("Invalid report specified {}".format(report))
+
+        exploitable = sandbox.check_exploitability()
+
+        return exploitable
