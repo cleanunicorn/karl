@@ -91,7 +91,8 @@ class Sandbox:
             self.logger.debug(vulns[v])
 
             # Set up new forked chain
-            self.logger.debug("Forking chain at block {}".format(self.block_number))
+            self.logger.debug(
+                "Forking chain at block {}".format(self.block_number))
             ganache = Ganache(block_number=self.block_number, rpc=self.rpc)
             w3 = Web3(HTTPProvider(ganache.internal_rpc))
             hacker = Web3.toChecksumAddress(ganache.accounts[0])
@@ -101,7 +102,8 @@ class Sandbox:
             for tx in vulns[v].transactions:
                 self.logger.debug("Sending transaction")
                 tx_hash = w3.eth.sendTransaction(tx)
-                tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash, timeout=10)
+                tx_receipt = w3.eth.waitForTransactionReceipt(
+                    tx_hash, timeout=10)
                 self.logger.debug("Receipt = {}".format(tx_receipt))
 
             final_balance = w3.eth.getBalance(hacker)

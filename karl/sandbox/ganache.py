@@ -75,7 +75,8 @@ class Ganache:
                 "-g",
                 str(gas_price),
                 "-f",
-                "{rpc}@{block_number}".format(rpc=self.rpc, block_number=block_number),
+                "{rpc}@{block_number}".format(
+                    rpc=self.rpc, block_number=block_number),
             ],
             shell=False,
             universal_newlines=True,
