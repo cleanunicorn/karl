@@ -22,6 +22,7 @@ class Sandbox:
     ):
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(verbosity)
+        self.verbosity = verbosity
 
         if rpc is None:
             raise (RPCInvalidException)
@@ -93,7 +94,9 @@ class Sandbox:
 
             # Set up new forked chain
             self.logger.debug("Forking chain at block {}".format(self.block_number))
-            ganache = Ganache(block_number=self.block_number, rpc=self.rpc)
+            ganache = Ganache(
+                block_number=self.block_number, rpc=self.rpc, verbosity=self.verbosity
+            )
             w3 = Web3(HTTPProvider(ganache.internal_rpc))
             hacker = Web3.toChecksumAddress(ganache.accounts[0])
             initial_balance = w3.eth.getBalance(hacker)
@@ -101,6 +104,7 @@ class Sandbox:
             # Sending transactions to chain
             for tx in vulns[v].transactions:
                 self.logger.debug("Sending transaction")
+                self.logger.debug("Transaction = {}".format(tx))
                 tx_hash = w3.eth.sendTransaction(tx)
                 tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash, timeout=10)
                 self.logger.debug("Receipt = {}".format(tx_receipt))

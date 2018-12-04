@@ -157,7 +157,7 @@ class Karl:
         myth.load_from_address(contract_address)
         self.logger.debug("Running Mythril")
 
-        # TODO: hack to stop mythril logging
+        # ! hack to stop mythril logging
         logging.getLogger().setLevel(logging.CRITICAL)
 
         return myth.fire_lasers(
@@ -167,7 +167,7 @@ class Karl:
             execution_timeout=45,
             create_timeout=10,
             max_depth=22,
-            transaction_count=2,
+            transaction_count=3,
             verbose_report=True,
         )
 
