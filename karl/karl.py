@@ -114,12 +114,21 @@ class Karl:
                         continue
                     try:
                         receipt = self.web3.eth.getTransactionReceipt(t["hash"])
-                        address = str(receipt["contractAddress"])
+                        if (receipt is None) or (
+                            receipt.get("contractAddress", None) is None
+                        ):
+                            self.logger.error(
+                                "Receipt invalid for hash = {}".format(t["hash"].hex())
+                            )
+                            self.logger.error(receipt)
+                            continue
+                        address = str(receipt.get("contractAddress", None))
                         report = self._run_mythril(contract_address=address)
 
                         issues_num = len(report.issues)
                         if issues_num:
                             self.logger.info("Found %s issue(s)", issues_num)
+                            self.output.send(report)
                             self.logger.info("Firing up sandbox tester")
 
                             exploitable = self._run_sandbox(
