@@ -95,7 +95,7 @@ class Sandbox:
             # Set up new forked chain
             self.logger.debug("Forking chain at block {}".format(self.block_number))
             ganache = Ganache(
-                block_number=self.block_number, rpc=self.rpc, verbosity=self.verbosity
+                internal_port=9545, rpc=self.rpc, verbosity=self.verbosity
             )
             w3 = Web3(HTTPProvider(ganache.internal_rpc))
             hacker = Web3.toChecksumAddress(ganache.accounts[0])

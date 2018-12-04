@@ -54,30 +54,54 @@ class Ganache:
             host=self.internal_host, port=self.internal_port
         )
 
+        # Gas price
+        self.gas_price = gas_price
+
+        # Account settings
         self.deterministic = deterministic
+
+        # Verbosity
         self.verbosity = verbosity
 
         self.logger = logging.getLogger("Ganache")
         self.logger.setLevel(self.verbosity)
 
-        self.logger.debug("Starting ganache")
+        # Building ganache-cli args
+        self.logger.debug("Setting up ganache-cli args")
+        args = ["ganache-cli"]
+
+        # Host
+        if self.internal_host is not None:
+            args.extend(["-h", self.internal_host])
+
+        # Port
+        if self.internal_port is not None:
+            args.extend(["-p", str(self.internal_port)])
+
+        # Deterministic
+        if self.deterministic:
+            args.append("-d")
+
+        # Gas price
+        args.extend(["-g", str(self.gas_price)])
+
+        # Fork blockchain
+        if self.rpc is not None:
+            if self.block_number is not None:
+                args.extend(
+                    [
+                        "-f",
+                        "{rpc}@{block_number}".format(
+                            rpc=self.rpc, block_number=block_number
+                        ),
+                    ]
+                )
+            else:
+                args.extend(["-f", "{rpc}".format(rpc=self.rpc)])
+
+        self.logger.debug("Starting ganache with\n{}".format(" ".join(args)))
         self.process = subprocess.Popen(
-            [
-                "ganache-cli",
-                "-h",
-                self.internal_host,
-                "-p",
-                str(self.internal_port),
-                "-d",
-                str(self.deterministic),
-                "-g",
-                str(gas_price),
-                "-f",
-                "{rpc}@{block_number}".format(rpc=self.rpc, block_number=block_number),
-            ],
-            shell=False,
-            universal_newlines=True,
-            stdout=subprocess.PIPE,
+            args, shell=False, universal_newlines=True, stdout=subprocess.PIPE
         )
         self.logger.debug(self.process.args)
         for l in self.process.stdout:
