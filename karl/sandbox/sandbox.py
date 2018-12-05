@@ -67,6 +67,7 @@ class Sandbox:
             transaction_list = []
             for _, t in transactions.items():
                 hacker = Web3.toChecksumAddress(Ganache.accounts[0])
+                feeder = Web3.toChecksumAddress(Ganache.accounts[1])
 
                 tx = {
                     "from": hacker,
@@ -100,6 +101,30 @@ class Sandbox:
             w3 = Web3(HTTPProvider(ganache.internal_rpc))
             hacker = Web3.toChecksumAddress(ganache.accounts[0])
             initial_balance = w3.eth.getBalance(hacker)
+
+            # Force feed ether
+            """
+            pragma solidity 0.5.1;
+
+            contract SelfDestructor {
+                constructor(address payable _receiver) public payable {
+                    selfdestruct(_receiver);
+                }
+            }
+            """
+            self.logger.debug("Feeding eth to contract")
+            tx_feed_args = {
+                "from": feeder,
+                "data": "0x6080604052604051602080604c833981018060405260208110156021"
+                "57600080fd5b81019080805190602001909291905050508073"
+                "ffffffffffffffffffffffffffffffffffffffff16fffe"
+                "000000000000000000000000" + self.contract_address[2:].lower(),
+                "value": 10 ** 18,
+            }
+            self.logger.debug("Transaction = {}".format(tx_feed_args))
+            tx_feed_hash = w3.eth.sendTransaction(tx_feed_args)
+            tx_feed_receipt = w3.eth.waitForTransactionReceipt(tx_feed_hash, timeout=10)
+            self.logger.debug("Fed ether in receipt = {}".format(tx_feed_receipt))
 
             # Sending transactions to chain
             for tx in vulns[v].transactions:
