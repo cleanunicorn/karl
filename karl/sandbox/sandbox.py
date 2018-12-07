@@ -43,6 +43,9 @@ class Sandbox:
     def check_exploitability(self):
         exploitable = False
 
+        hacker = Web3.toChecksumAddress(Ganache.accounts[9])
+        feeder = Web3.toChecksumAddress(Ganache.accounts[8])
+
         # Parse report and generate vulnerability list
         vulns = []
         for i in range(0, len(self.report.issues)):
@@ -66,9 +69,6 @@ class Sandbox:
             # Build formatted transaction list
             transaction_list = []
             for _, t in transactions.items():
-                hacker = Web3.toChecksumAddress(Ganache.accounts[0])
-                feeder = Web3.toChecksumAddress(Ganache.accounts[1])
-
                 tx = {
                     "from": hacker,
                     "to": self.contract_address,
@@ -99,7 +99,6 @@ class Sandbox:
                 internal_port=9545, rpc=self.rpc, verbosity=self.verbosity
             )
             w3 = Web3(HTTPProvider(ganache.internal_rpc))
-            hacker = Web3.toChecksumAddress(ganache.accounts[0])
             initial_balance = w3.eth.getBalance(hacker)
 
             # Force feed ether
