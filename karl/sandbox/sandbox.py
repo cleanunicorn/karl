@@ -83,15 +83,15 @@ class Sandbox:
 
             vulns.append(
                 Vulnerability(
-                    type=vuln_type,
+                    kind=vuln_type,
                     description=description,
                     transactions=transaction_list,
                 )
             )
 
         # Test each vulnerability
-        for v in range(0, len(vulns)):
-            self.logger.debug(vulns[v])
+        for i, v in enumerate(vulns):
+            self.logger.debug(v)
 
             # Set up new forked chain
             self.logger.debug("Forking chain at block {}".format(self.block_number))
@@ -117,7 +117,9 @@ class Sandbox:
                 "data": "0x6080604052604051602080604c833981018060405260208110156021"
                 "57600080fd5b81019080805190602001909291905050508073"
                 "ffffffffffffffffffffffffffffffffffffffff16fffe"
+                # Add the address of the contract that is force fed
                 "000000000000000000000000" + self.contract_address[2:].lower(),
+                # Feed with 1 ETH
                 "value": 10 ** 18,
             }
             self.logger.debug("Transaction = {}".format(tx_feed_args))
@@ -126,7 +128,7 @@ class Sandbox:
             self.logger.debug("Fed ether in receipt = {}".format(tx_feed_receipt))
 
             # Sending transactions to chain
-            for tx in vulns[v].transactions:
+            for tx in v.transactions:
                 self.logger.debug("Sending transaction")
                 self.logger.debug("Transaction = {}".format(tx))
                 tx_hash = w3.eth.sendTransaction(tx)
@@ -141,7 +143,7 @@ class Sandbox:
                         initial_balance, final_balance
                     )
                 )
-                print(vulns[v])
+                print(v)
                 exploitable = True
             else:
                 print("Doesn't have more ether after exploit")
