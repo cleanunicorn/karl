@@ -60,7 +60,7 @@ jobs:
       - run:
           name: Deploy
           command: |
-            pip install --upgrade --user twine
+            sudo pip install --upgrade twine
             twine upload dist/*
 
 workflows:
