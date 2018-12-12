@@ -5,11 +5,7 @@ from mythril.mythril import Mythril
 from web3 import Web3
 from karl.exceptions import RPCError
 from karl.sandbox.sandbox import Sandbox
-from karl.sandbox.exceptions import (
-    ContractInvalidException,
-    BlockNumberInvalidException,
-    ReportInvalidException,
-)
+from karl.sandbox.exceptions import SandboxBaseException
 
 
 logging.basicConfig(level=logging.INFO)
@@ -41,6 +37,11 @@ class Karl:
         self.rpc_tls = rpctls
         # Send results to this output (could be stdout or restful url)
         self.output = output
+
+        # ! hack to stop mythril logging
+        logging.getLogger().setLevel(logging.CRITICAL)
+
+        # Set logging verbosity
         self.logger = logging.getLogger("Karl")
         self.logger.setLevel(verbosity)
 
@@ -157,9 +158,6 @@ class Karl:
         myth.load_from_address(contract_address)
         self.logger.debug("Running Mythril")
 
-        # ! hack to stop mythril logging
-        logging.getLogger().setLevel(logging.CRITICAL)
-
         return myth.fire_lasers(
             strategy="dfs",
             modules=["ether_thief", "suicide"],
@@ -183,16 +181,8 @@ class Karl:
                 rpc=rpc,
                 verbosity=self.logger.level,
             )
-        except BlockNumberInvalidException:
-            self.logger.error(
-                "Unspecified block number to fork blockchain = {}".format(block_number)
-            )
-        except ContractInvalidException:
-            self.logger.error(
-                "Invalid specified contract address = {}".format(contract_address)
-            )
-        except ReportInvalidException:
-            self.logger.error("Invalid report specified {}".format(report))
+        except SandboxBaseException as e:
+            self.logger.error(e)
 
         exploitable = sandbox.check_exploitability()
 

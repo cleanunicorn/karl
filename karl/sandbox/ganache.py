@@ -113,11 +113,3 @@ class Ganache:
 
     def stop(self):
         self.process.send_signal(signal.SIGTERM)
-
-
-class GanacheBaseException(Exception):
-    pass
-
-
-class ReceiverInvalidException(GanacheBaseException):
-    pass

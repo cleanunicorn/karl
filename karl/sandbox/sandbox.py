@@ -118,7 +118,7 @@ class Sandbox:
                 "57600080fd5b81019080805190602001909291905050508073"
                 "ffffffffffffffffffffffffffffffffffffffff16fffe"
                 # Add the address of the contract that is force fed
-                "000000000000000000000000" + self.contract_address[2:].lower(),
+                + str(24 * "0") + self.contract_address[2:].lower(),
                 # Feed with 1 ETH
                 "value": 10 ** 18,
             }
