@@ -48,8 +48,14 @@ def main():
     args = parser.parse_args()
 
     # Set verbosity
-    verbosity_default = logging.INFO
-    verbosity_levels = {1: logging.DEBUG}
+    verbosity_default = logging.NOTSET
+    verbosity_levels = {
+        1: logging.CRITICAL,
+        2: logging.ERROR,
+        3: logging.WARNING,
+        4: logging.INFO,
+        5: logging.DEBUG,
+    }
     verbose = (
         len(verbosity_levels)
         if args.verbose is not None and args.verbose > len(verbosity_levels)

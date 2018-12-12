@@ -1,5 +1,5 @@
 linters:
-  flake8:
+  black:
     fixer: true
   shellcheck:
     shell: bash

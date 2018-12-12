@@ -1,10 +1,11 @@
 import time
-import re
 import logging
 import sys
 from mythril.mythril import Mythril
 from web3 import Web3
 from karl.exceptions import RPCError
+from karl.sandbox.sandbox import Sandbox
+from karl.sandbox.exceptions import SandboxBaseException
 
 
 logging.basicConfig(level=logging.INFO)
@@ -36,6 +37,11 @@ class Karl:
         self.rpc_tls = rpctls
         # Send results to this output (could be stdout or restful url)
         self.output = output
+
+        # ! hack to stop mythril logging
+        logging.getLogger().setLevel(logging.CRITICAL)
+
+        # Set logging verbosity
         self.logger = logging.getLogger("Karl")
         self.logger.setLevel(verbosity)
 
@@ -58,22 +64,23 @@ class Karl:
                         web3_rpc = "http://{host}:{port}".format(host=host, port=port)
                 except ValueError:
                     raise RPCError(
-                        "Invalid RPC argument provided '{}', use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
-                            rpc
-                        )
+                        "Invalid RPC argument provided '{}', use "
+                        "'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' "
+                        "or HOST:PORT".format(rpc)
                     )
         if web3_rpc is None:
             raise RPCError(
-                "Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
-                    rpc
-                )
+                "Invalid RPC argument provided {}, use "
+                "'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' "
+                "or HOST:PORT".format(rpc)
             )
+        self.web3_rpc = web3_rpc
         self.web3 = Web3(Web3.HTTPProvider(web3_rpc, request_kwargs={"timeout": 60}))
         if self.web3 is None:
             raise RPCError(
-                "Invalid RPC argument provided {}, use 'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' or HOST:PORT".format(
-                    rpc
-                )
+                "Invalid RPC argument provided {}, use "
+                "'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' "
+                "or HOST:PORT".format(rpc)
             )
 
         self.block_number = block_number or self.web3.eth.blockNumber
@@ -102,18 +109,40 @@ class Karl:
 
                 # For each transaction get the newly created accounts
                 for t in block.get("transactions", []):
-                    # If there is no to defined or to is reported as address(0x0) a new contract is created
+                    # If there is no to defined or to is reported as address(0x0)
+                    # a new contract is created
                     if (t["to"] is not None) and (t["to"] != "0x0"):
                         continue
                     try:
                         receipt = self.web3.eth.getTransactionReceipt(t["hash"])
-                        address = str(receipt["contractAddress"])
+                        if (receipt is None) or (
+                            receipt.get("contractAddress", None) is None
+                        ):
+                            self.logger.error(
+                                "Receipt invalid for hash = {}".format(t["hash"].hex())
+                            )
+                            self.logger.error(receipt)
+                            continue
+                        address = str(receipt.get("contractAddress", None))
                         report = self._run_mythril(contract_address=address)
 
                         issues_num = len(report.issues)
                         if issues_num:
                             self.logger.info("Found %s issue(s)", issues_num)
-                            self.output.send(report=report, contract_address=address)
+                            self.output.send(report)
+                            self.logger.info("Firing up sandbox tester")
+
+                            exploitable = self._run_sandbox(
+                                block_number=block.get("number", None),
+                                contract_address=address,
+                                report=report,
+                                rpc=self.web3_rpc,
+                            )
+                            if exploitable:
+                                # TODO: Nice output
+                                pass
+                            else:
+                                pass
                         else:
                             self.logger.info("No issues found")
                     except Exception as e:
@@ -128,6 +157,7 @@ class Karl:
         self.logger.info("Analyzing %s", contract_address)
         myth.load_from_address(contract_address)
         self.logger.debug("Running Mythril")
+
         return myth.fire_lasers(
             strategy="dfs",
             modules=["ether_thief", "suicide"],
@@ -135,6 +165,25 @@ class Karl:
             execution_timeout=45,
             create_timeout=10,
             max_depth=22,
-            transaction_count=2,
+            transaction_count=3,
             verbose_report=True,
         )
+
+    def _run_sandbox(
+        self, block_number=None, contract_address=None, report=None, rpc=None
+    ):
+        exploitable = False
+        try:
+            sandbox = Sandbox(
+                block_number=block_number,
+                contract_address=contract_address,
+                report=report,
+                rpc=rpc,
+                verbosity=self.logger.level,
+            )
+        except SandboxBaseException as e:
+            self.logger.error(e)
+
+        exploitable = sandbox.check_exploitability()
+
+        return exploitable
