@@ -1,4 +1,7 @@
 from setuptools import setup, find_packages
+from karl import __version__
+from setuptools.command.install import install
+import sys
 import os
 
 
@@ -12,9 +15,24 @@ def read_file(fname):
         return fd.read()
 
 
+class VerifyVersionCommand(install):
+    """Custom command to verify that the git tag matches our version"""
+
+    description = "verify that the git tag matches our version"
+
+    def run(self):
+        tag = os.getenv("CIRCLE_TAG")
+
+        if tag != __version__:
+            info = "Git tag: {0} does not match the version of this app: {1}".format(
+                tag, __version__
+            )
+            sys.exit(info)
+
+
 setup(
     name="karl",
-    version="0.4.0",
+    version=__version__,
     license="MIT",
     author="Daniel Luca",
     author_email="daniel.luca@consensys.net",
@@ -24,4 +42,5 @@ setup(
     long_description_content_type="text/markdown",
     entry_points={"console_scripts": ["karl=karl.interfaces.cli:main"]},
     credits=["Bernhard Mueller <bernhard.mueller@mithril.ai>"],
+    cmdclass={"verify": VerifyVersionCommand},
 )

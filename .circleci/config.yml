@@ -1,11 +1,15 @@
 # Circleci build file
 # https://circleci.com/gh/cleanunicorn/karl
+
+defaults: &defaults
+  docker:
+    - image: circleci/python:3.7.1
+  working_directory: ~/karl
+
 version: 2
 jobs:
-  build:
-    working_directory: ~/karl
-    docker:
-      - image: circleci/python:3.7.1
+  test:
+    <<: *defaults
     steps:
       - checkout
 
@@ -17,7 +21,7 @@ jobs:
           keys:
           - v1-dependencies-{{ checksum "requirements.txt" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-			
+          - v1-dependencies-
 
       - run:
           name: Install dependencies
@@ -37,6 +41,39 @@ jobs:
 
       - store_test_results:
           path: test-results
+
       - store_artifacts:
           path: test-results
           destination: tr1
+
+  pypi_release:
+    <<: *defaults
+    steps:
+      - checkout:
+          path: ~/karl
+      - run:
+          name: Verify Git tag vs. version
+          command: python3 setup.py verify
+      - run:
+          name: Build
+          command: python3 setup.py sdist
+      - run:
+          name: Deploy
+          command: twine upload dist/*
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test:
+          filters:
+            tags:
+              only: /.*/
+      - pypi_release:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+          requires:
+            - test
