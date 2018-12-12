@@ -59,8 +59,9 @@ jobs:
           command: python3 setup.py sdist
       - run:
           name: Deploy
-          command: pip install --upgrade --user twine
-          command: twine upload dist/*
+          command: |
+            pip install --upgrade --user twine
+            twine upload dist/*
 
 workflows:
   version: 2
