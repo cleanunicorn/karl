@@ -52,6 +52,9 @@ jobs:
       - checkout:
           path: ~/karl
       - run:
+          name: Install twine
+          command: pip install --upgrade pip wheel setuptools twine
+      - run:
           name: Verify Git tag vs. version
           command: python3 setup.py verify
       - run:
