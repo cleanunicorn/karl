@@ -107,7 +107,8 @@ Analyzing 0x4b8e80acaE3F0db32e5d35925EfaA97D477dBb70
 
 And it will send this to the listening service
 
-```
+```console
+$ nc -l 8080
 POST / HTTP/1.1
 Accept-Encoding: identity
 Content-Type: application/x-www-form-urlencoded
