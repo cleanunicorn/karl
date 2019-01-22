@@ -3,6 +3,7 @@ import sys
 import logging
 from karl.output.stdout import Stdout
 from karl.output.posturl import PostURL
+from karl.output.folder import Folder
 from karl.karl import Karl
 
 
@@ -34,9 +35,15 @@ def main():
         "--output",
         help="Where to send results",
         default="stdout",
-        metavar="Can be one of: stdout, posturl",
+        metavar="Can be one of: stdout, posturl, folder",
     )
-    output.add_argument("--posturl", help="Send results to a RESTful url")
+    output.add_argument(
+        "--posturl",
+        help="Send results to a RESTful url [when using `--output posturl`]",
+    )
+    output.add_argument(
+        "--folder-path", help="Save files to this folder [when using `--output folder`]"
+    )
 
     # Verbosity
     verbosity = parser.add_argument_group("Verbosity")
@@ -67,18 +74,22 @@ def main():
         output_destination = Stdout(
             verbosity=verbosity_levels.get(verbose, verbosity_default)
         )
-    else:
-        if args.output == "posturl":
-            if args.posturl is None:
-                print(
-                    "No posturl specified. Set a destination with --posturl http://server:port/destination/url"
-                )
-                sys.exit()
-            else:
-                output_destination = PostURL(
-                    url=args.posturl,
-                    verbosity=verbosity_levels.get(verbose, verbosity_default),
-                )
+    elif args.output == "posturl":
+        if args.posturl is None:
+            print(
+                "No posturl specified. Set a destination with --posturl http://server:port/destination/url"
+            )
+            sys.exit()
+        else:
+            output_destination = PostURL(
+                url=args.posturl,
+                verbosity=verbosity_levels.get(verbose, verbosity_default),
+            )
+    elif args.output == "folder":
+        output_destination = Folder(
+            folder_path=args.folder_path,
+            verbosity=verbosity_levels.get(verbose, verbosity_default),
+        )
 
     if output_destination is None:
         print("Must pick an output destination with --output")
