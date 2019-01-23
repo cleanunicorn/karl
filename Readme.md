@@ -5,6 +5,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/53bb3ba0ed50447698e775edd397baa7)](https://www.codacy.com/app/lucadanielcostin/karl)
 [![PyPI](https://img.shields.io/pypi/v/karl.svg)](https://pypi.org/project/karl/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=cleanunicorn_karl&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=cleanunicorn_karl)
 
 A monitor for smart contracts that checks for security vulnerabilities
 
