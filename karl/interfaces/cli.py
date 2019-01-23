@@ -42,7 +42,8 @@ def main():
         help="Send results to a RESTful url [when using `--output posturl`]",
     )
     output.add_argument(
-        "--folder-path", help="Save files to this folder [when using `--output folder`]"
+        "--folder-output",
+        help="Save files to this folder [when using `--output folder`]",
     )
 
     # Verbosity
@@ -87,7 +88,7 @@ def main():
             )
     elif args.output == "folder":
         output_destination = Folder(
-            folder_path=args.folder_path,
+            folder_path=args.folder_output,
             verbosity=verbosity_levels.get(verbose, verbosity_default),
         )
 

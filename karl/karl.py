@@ -129,9 +129,9 @@ class Karl:
                         issues_num = len(report.issues)
                         if issues_num:
                             self.logger.info("Found %s issue(s)", issues_num)
-                            self.output.send(report)
-                            self.logger.info("Firing up sandbox tester")
+                            self.output.send(report, contract_address=address)
 
+                            self.logger.info("Firing up sandbox tester")
                             exploitable = self._run_sandbox(
                                 block_number=block.get("number", None),
                                 contract_address=address,

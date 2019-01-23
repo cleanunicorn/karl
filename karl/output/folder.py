@@ -16,7 +16,7 @@ class Folder(OutputInterface):
 
     def send(self, report=dict(), contract_address=""):
         self.logger.debug(
-            "Found {} issues for {}".format(len(report.issues)), contract_address
+            "Found {} issues for {}".format(len(report.issues), contract_address)
         )
 
         file_path = "{path}/{filename}.json".format(
