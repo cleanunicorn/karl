@@ -41,8 +41,7 @@ def main():
     # Verbosity
     verbosity = parser.add_argument_group("Verbosity")
     verbosity.add_argument(
-        "--verbose", "-v", action="count", help="Set verbose",
-        default=4  # logging.INFO
+        "--verbose", "-v", action="count", help="Set verbose", default=4  # logging.INFO
     )
 
     # Parse cli args
