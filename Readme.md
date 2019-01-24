@@ -11,11 +11,17 @@ A monitor for smart contracts that checks for security vulnerabilities
 
 ## Install
 
+Get latest version of Karl.
+
 ```console
 $ pip install --user karl
 ```
 
-Will make `karl` available in your shell.
+Install [Ganache](https://truffleframework.com/ganache) if you want Karl to clone the blockchain and reduce false positives.
+
+```console
+$ npm i -g ganache-cli
+```
 
 ## Demo
 
