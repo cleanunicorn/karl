@@ -137,7 +137,11 @@ class Sandbox:
                     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash, timeout=10)
                     self.logger.debug("Receipt = {}".format(tx_receipt))
                 except Exception as e:
-                    self.logger.error("Exception raised while exploiting the contract: %s\n%s", e, sys.exc_info()[2])
+                    self.logger.error(
+                        "Exception raised while exploiting the contract: %s\n%s",
+                        e,
+                        sys.exc_info()[2],
+                    )
 
             final_balance = w3.eth.getBalance(hacker)
             if final_balance > initial_balance:
