@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from karl import __version__
+from karl.version import __version__
 from setuptools.command.install import install
 import sys
 import os
