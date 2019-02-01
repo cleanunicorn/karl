@@ -54,7 +54,9 @@ def main():
     )
 
     # Version
-    parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
+    parser.add_argument(
+        "--version", action="version", version="%(prog)s " + __version__
+    )
 
     # Parse cli args
     args = parser.parse_args()
