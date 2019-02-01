@@ -1,5 +1,6 @@
 import logging
 import json
+import sys
 from karl.sandbox.exceptions import (
     BlockNumberInvalidException,
     ContractInvalidException,
@@ -131,9 +132,16 @@ class Sandbox:
             for tx in v.transactions:
                 self.logger.debug("Sending transaction")
                 self.logger.debug("Transaction = {}".format(tx))
-                tx_hash = w3.eth.sendTransaction(tx)
-                tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash, timeout=10)
-                self.logger.debug("Receipt = {}".format(tx_receipt))
+                try:
+                    tx_hash = w3.eth.sendTransaction(tx)
+                    tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash, timeout=10)
+                    self.logger.debug("Receipt = {}".format(tx_receipt))
+                except Exception as e:
+                    self.logger.error(
+                        "Exception raised while exploiting the contract: %s\n%s",
+                        e,
+                        sys.exc_info()[2],
+                    )
 
             final_balance = w3.eth.getBalance(hacker)
             if final_balance > initial_balance:
