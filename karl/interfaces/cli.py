@@ -1,6 +1,7 @@
 import argparse
 import sys
 import logging
+from karl.version import __version__
 from karl.output.stdout import Stdout
 from karl.output.posturl import PostURL
 from karl.output.folder import Folder
@@ -51,6 +52,9 @@ def main():
     verbosity.add_argument(
         "--verbose", "-v", action="count", help="Set verbose", default=4
     )
+
+    # Version
+    parser.add_argument('--version', action='version', version='%(prog)s ' + __version__)
 
     # Parse cli args
     args = parser.parse_args()
