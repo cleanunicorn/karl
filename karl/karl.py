@@ -1,7 +1,11 @@
 import time
 import logging
 import sys
-from mythril.mythril import Mythril
+
+from mythril.mythril import MythrilAnalyzer
+from mythril.mythril import MythrilDisassembler
+from mythril.ethereum.interface.rpc.client import EthJsonRpc
+
 from web3 import Web3
 from karl.exceptions import RPCError
 from karl.sandbox.sandbox import Sandbox
@@ -47,17 +51,25 @@ class Karl:
 
         # Init web3 client
         web3_rpc = None
+        eth_host = None
+        eth_port = None
         if rpc == "ganache":
             web3_rpc = "http://127.0.0.1:8545"
+            eth_host = "127.0.0.1"
+            eth_port = "8545"
         else:
             infura_network = (
                 rpc.split("infura-")[1] if rpc.startswith("infura-") else None
             )
             if infura_network in ["mainnet", "rinkeby", "kovan", "ropsten"]:
                 web3_rpc = "https://{net}.infura.io".format(net=infura_network)
+                eth_host = "{net}.infura.io".format(net=infura_network)
+                eth_port = "443"
             else:
                 try:
                     host, port = rpc.split(":")
+                    eth_host = host
+                    eth_port = port
                     if rpctls:
                         web3_rpc = "https://{host}:{port}".format(host=host, port=port)
                     else:
@@ -75,6 +87,8 @@ class Karl:
                 "or HOST:PORT".format(rpc)
             )
         self.web3_rpc = web3_rpc
+        self.eth_host = eth_host
+        self.eth_port = eth_port
         self.web3 = Web3(Web3.HTTPProvider(web3_rpc, request_kwargs={"timeout": 60}))
         if self.web3 is None:
             raise RPCError(
@@ -151,20 +165,34 @@ class Karl:
             self.logger.error("Exception: %s\n%s", e, sys.exc_info()[2])
 
     def _run_mythril(self, contract_address=None):
-        myth = Mythril(onchain_storage_access=True, enable_online_lookup=True)
-        myth.set_api_rpc(rpc=self.rpc, rpctls=self.rpc_tls)
+        eth_json_rpc = EthJsonRpc(
+            host=self.eth_host, port=self.eth_port, tls=self.rpc_tls
+        )
+
+        disassembler = MythrilDisassembler(
+            eth=eth_json_rpc,
+            solc_version=None,
+            solc_args=None,
+            enable_online_lookup=True,
+        )
+
+        analyzer = MythrilAnalyzer(
+            # strategy="bfs",
+            onchain_storage_access=False,
+            disassembler=disassembler,
+            address=contract_address,
+            execution_timeout=600,
+            max_depth=50,
+            create_timeout=10,
+            enable_iprof=False,
+        )
 
         self.logger.info("Analyzing %s", contract_address)
-        myth.load_from_address(contract_address)
         self.logger.debug("Running Mythril")
 
-        return myth.fire_lasers(
-            strategy="dfs",
-            modules=["ether_thief", "suicide"],
-            address=contract_address,
-            execution_timeout=45,
-            create_timeout=10,
-            max_depth=22,
+        return analyzer.fire_lasers(
+            # modules=["ether_thief", "suicide"],
+            modules=[],
             transaction_count=3,
             verbose_report=True,
         )
