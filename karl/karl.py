@@ -26,6 +26,7 @@ class Karl:
         rpc_tls=False,
         block_number=None,
         output=None,
+        sandbox=True,
         verbosity=logging.INFO,
     ):
         """
@@ -41,8 +42,11 @@ class Karl:
         # Send results to this output (could be stdout or restful url)
         self.output = output
 
+        # Sandbox options
+        self.sandbox = sandbox
+
         # ! hack to stop mythril logging
-        logging.getLogger().setLevel(logging.CRITICAL)
+        logging.getLogger("mythril").setLevel(logging.CRITICAL)
 
         # Set logging verbosity
         self.logger = logging.getLogger("Karl")
@@ -147,18 +151,19 @@ class Karl:
                             self.logger.info("Found %s issue(s)", issues_num)
                             self.output.send(report, contract_address=address)
 
-                            self.logger.info("Firing up sandbox tester")
-                            exploitable = self._run_sandbox(
-                                block_number=block.get("number", None),
-                                contract_address=address,
-                                report=report,
-                                rpc=self.web3_rpc,
-                            )
-                            if exploitable:
-                                # TODO: Nice output
-                                pass
-                            else:
-                                pass
+                            if self.sandbox:
+                                self.logger.info("Firing up sandbox tester")
+                                exploitable = self._run_sandbox(
+                                    block_number=block.get("number", None),
+                                    contract_address=address,
+                                    report=report,
+                                    rpc=self.web3_rpc,
+                                )
+                                if exploitable:
+                                    # TODO: Nice output
+                                    pass
+                                else:
+                                    pass
                         else:
                             self.logger.info("No issues found")
                     except Exception as e:

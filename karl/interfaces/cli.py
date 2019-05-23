@@ -47,6 +47,15 @@ def main():
         help="Save files to this folder [when using `--output folder`]",
     )
 
+    # Sandbox
+    sandbox_options = parser.add_argument_group("Sandbox")
+    sandbox_options.add_argument(
+        "--sandbox",
+        help="Test found transactions in a Ganache sandbox",
+        default=True,
+        type=str2bool,
+    )
+
     # Verbosity
     verbosity = parser.add_argument_group("Verbosity")
     verbosity.add_argument(
@@ -110,11 +119,20 @@ def main():
             output=output_destination,
             verbosity=verbosity_levels.get(verbose, verbosity_default),
             block_number=args.block,
+            sandbox=args.sandbox
         )
         karl.run(forever=True)
     except Exception as e:
         print("[CLI] Exception:", e)
 
+
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 if __name__ == "__main__":
     main()
