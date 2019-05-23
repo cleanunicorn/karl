@@ -52,6 +52,9 @@ class Sandbox:
         for i in range(0, len(self.report.issues)):
             issue = self.report.sorted_issues()[i]
 
+            if issue["debug"] is "":
+                continue
+
             if "withdraw its balance" in issue["description"]:
                 vuln_type = VulnerabilityType.KILL_AND_WITHDRAW
                 description = (

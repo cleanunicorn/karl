@@ -23,7 +23,7 @@ class Karl:
     def __init__(
         self,
         rpc=None,
-        rpctls=False,
+        rpc_tls=False,
         block_number=None,
         output=None,
         verbosity=logging.INFO,
@@ -38,7 +38,6 @@ class Karl:
 
         # Ethereum node to connect to
         self.rpc = rpc
-        self.rpc_tls = rpctls
         # Send results to this output (could be stdout or restful url)
         self.output = output
 
@@ -53,6 +52,7 @@ class Karl:
         web3_rpc = None
         eth_host = None
         eth_port = None
+        eth_tls = rpc_tls
         if rpc == "ganache":
             web3_rpc = "http://127.0.0.1:8545"
             eth_host = "127.0.0.1"
@@ -65,12 +65,13 @@ class Karl:
                 web3_rpc = "https://{net}.infura.io".format(net=infura_network)
                 eth_host = "{net}.infura.io".format(net=infura_network)
                 eth_port = "443"
+                eth_tls = True
             else:
                 try:
                     host, port = rpc.split(":")
                     eth_host = host
                     eth_port = port
-                    if rpctls:
+                    if rpc_tls:
                         web3_rpc = "https://{host}:{port}".format(host=host, port=port)
                     else:
                         web3_rpc = "http://{host}:{port}".format(host=host, port=port)
@@ -88,7 +89,8 @@ class Karl:
             )
         self.web3_rpc = web3_rpc
         self.eth_host = eth_host
-        self.eth_port = eth_port
+        self.eth_port = int(eth_port)
+        self.rpc_tls = eth_tls
         self.web3 = Web3(Web3.HTTPProvider(web3_rpc, request_kwargs={"timeout": 60}))
         if self.web3 is None:
             raise RPCError(
@@ -176,6 +178,8 @@ class Karl:
             enable_online_lookup=True,
         )
 
+        disassembler.load_from_address(contract_address)
+
         analyzer = MythrilAnalyzer(
             # strategy="bfs",
             onchain_storage_access=False,
@@ -184,7 +188,6 @@ class Karl:
             execution_timeout=600,
             max_depth=50,
             create_timeout=10,
-            enable_iprof=False,
         )
 
         self.logger.info("Analyzing %s", contract_address)

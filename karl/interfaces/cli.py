@@ -21,7 +21,7 @@ def main():
         metavar="HOST:PORT / ganache / infura-{mainnet, rinkeby, kovan, ropsten}",
     )
     rpc.add_argument(
-        "--rpctls", type=bool, default=False, help="RPC connection over TLS"
+        "--rpc_tls", type=bool, default=False, help="RPC connection over TLS"
     )
     rpc.add_argument(
         "--block",
@@ -106,7 +106,7 @@ def main():
     try:
         karl = Karl(
             rpc=args.rpc,
-            rpctls=args.rpctls,
+            rpc_tls=args.rpc_tls,
             output=output_destination,
             verbosity=verbosity_levels.get(verbose, verbosity_default),
             block_number=args.block,
