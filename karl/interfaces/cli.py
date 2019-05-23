@@ -119,7 +119,7 @@ def main():
             output=output_destination,
             verbosity=verbosity_levels.get(verbose, verbosity_default),
             block_number=args.block,
-            sandbox=args.sandbox
+            sandbox=args.sandbox,
         )
         karl.run(forever=True)
     except Exception as e:
@@ -127,12 +127,13 @@ def main():
 
 
 def str2bool(v):
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+    if v.lower() in ("yes", "true", "t", "y", "1"):
         return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+    elif v.lower() in ("no", "false", "f", "n", "0"):
         return False
     else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
+        raise argparse.ArgumentTypeError("Boolean value expected.")
+
 
 if __name__ == "__main__":
     main()
