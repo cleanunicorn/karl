@@ -17,7 +17,7 @@ Get latest version of Karl.
 $ pip install --user karl
 ```
 
-Install [Ganache](https://truffleframework.com/ganache) with [npm](https://www.npmjs.com/get-npm) if you want Karl to clone the blockchain and reduce false positives.
+Install [Ganache](https://truffleframework.com/ganache) with [npm](https://www.npmjs.com/get-npm) if you want Karl to test the found vulnerabilities in a sandbox (`--sandbox=true`, disabled by default), to reduce false positives.
 
 ```console
 $ npm i -g ganache-cli
