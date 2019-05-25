@@ -52,7 +52,7 @@ def main():
     sandbox_options.add_argument(
         "--sandbox",
         help="Test found transactions in a Ganache sandbox",
-        default=True,
+        default=False,
         type=str2bool,
     )
 
