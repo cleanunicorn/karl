@@ -52,7 +52,7 @@ class Sandbox:
         for i in range(0, len(self.report.issues)):
             issue = self.report.sorted_issues()[i]
 
-            if issue["debug"] is "":
+            if issue["tx_sequence"] == "":
                 continue
 
             if "withdraw its balance" in issue["description"]:
@@ -67,21 +67,21 @@ class Sandbox:
                 vuln_type = VulnerabilityType.KILL_ONLY
                 description = "Anybody can accidentally kill this contract."
 
-            tx = issue["debug"].replace("\n", " ").replace("'", '"')
-            transactions = json.loads(tx)
+            transactions = json.loads(issue["tx_sequence"])
 
             # Build formatted transaction list
             transaction_list = []
-            for _, t in transactions.items():
+            for i in range(0, len(transactions["steps"])):
+                t = transactions["steps"][i]
                 tx = {
                     "from": hacker,
                     "to": self.contract_address,
                     # If a transaction has an argument that points
                     # to the hacker replace that
-                    "data": t["calldata"].replace(
+                    "data": t["input"].replace(
                         "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef", hacker[2:]
                     ),
-                    "value": int(t["call_value"], 16),
+                    "value": int(t["value"], 16),
                 }
                 transaction_list.append(tx)
 
