@@ -118,3 +118,5 @@ dmypy.json
 # Editor
 .vscode
 .idea
+
+/0x*

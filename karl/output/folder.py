@@ -1,4 +1,6 @@
 import logging
+import json
+
 from karl.output.output import OutputInterface
 
 
@@ -14,13 +16,24 @@ class Folder(OutputInterface):
             "Folder enabled, saving output to {path}".format(path=self.folder_path)
         )
 
-    def send(self, report=dict(), contract_address=""):
+    def report(self, report=dict(), contract_address=""):
         self.logger.debug(
             "Found {} issues for {}".format(len(report.issues), contract_address)
         )
 
-        file_path = "{path}/{filename}.json".format(
+        file_path = "{path}/{filename}.txt".format(
             path=self.folder_path, filename=contract_address
         )
         with open(file_path, "w") as f:
             f.write(report.as_text())
+
+    def vulnerable(self, exploits, contract_address):
+        self.logger.debug(
+            "Found {} exploits for {}.".format(len(exploits), contract_address)
+        )
+
+        file_path = "{path}/{filename}-exploits.json".format(
+            path=self.folder_path, filename=contract_address
+        )
+        with open(file_path, "w") as f:
+            f.write(json.dumps(exploits, indent=4, sort_keys=True))

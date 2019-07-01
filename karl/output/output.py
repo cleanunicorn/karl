@@ -7,5 +7,9 @@ class OutputInterface(ABC):
         super().__init__()
 
     @abstractclassmethod
-    def send(self, report: Report, contract_address=""):
+    def report(self, report: Report, contract_address=""):
+        pass
+
+    @abstractclassmethod
+    def vulnerable(self, exploits=None, contract_address=None):
         pass

@@ -7,7 +7,7 @@ from karl.sandbox.exceptions import (
     ReportInvalidException,
     RPCInvalidException,
 )
-from karl.sandbox.vulnerability import Vulnerability, VulnerabilityType
+from karl.sandbox.vulnerability import Vulnerability
 from karl.sandbox.ganache import Ganache
 from web3 import Web3, HTTPProvider
 
@@ -42,7 +42,7 @@ class Sandbox:
         self.report = report
 
     def check_exploitability(self):
-        exploitable = False
+        exploits = []
 
         hacker = Web3.toChecksumAddress(Ganache.accounts[9])
         feeder = Web3.toChecksumAddress(Ganache.accounts[8])
@@ -56,15 +56,15 @@ class Sandbox:
                 continue
 
             if "withdraw its balance" in issue["description"]:
-                vuln_type = VulnerabilityType.KILL_AND_WITHDRAW
+                vuln_type = "KILL_AND_WITHDRAW"
                 description = (
                     "Looks line anyone can kill this contract and steal its balance."
                 )
             elif "withdraw ETH" in issue["description"]:
-                vuln_type = VulnerabilityType.ETHER_THEFT
+                vuln_type = "ETHER_THEFT"
                 description = "Looks like anyone can withdraw ETH from this contract."
             else:
-                vuln_type = VulnerabilityType.KILL_ONLY
+                vuln_type = "KILL_ONLY"
                 description = "Anybody can accidentally kill this contract."
 
             transactions = json.loads(issue["tx_sequence"])
@@ -148,14 +148,15 @@ class Sandbox:
 
             final_balance = w3.eth.getBalance(hacker)
             if final_balance > initial_balance:
-                print("POSSIBLE VULNERABILITY!")
+                print("Confirmed vulnerability!")
                 print(
                     "Initial balance = {}, final balance = {}".format(
                         initial_balance, final_balance
                     )
                 )
+                v.confirmed = True
                 print(v)
-                exploitable = True
+                exploits.append(v.__dict__)
             else:
                 print("Doesn't have more ether after exploit")
 
@@ -163,4 +164,4 @@ class Sandbox:
             self.logger.debug("Stopping forked chain")
             ganache.stop()
 
-        return exploitable
+        return exploits

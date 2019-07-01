@@ -129,8 +129,8 @@ class Karl:
 
                 # For each transaction get the newly created accounts
                 for t in block.get("transactions", []):
-                    # If there is no to defined or to is reported as address(0x0)
-                    # a new contract is created
+                    # If there is no to defined, or to is reported as address(0x0)
+                    # a new contract was created
                     if (t["to"] is not None) and (t["to"] != "0x0"):
                         continue
                     try:
@@ -149,19 +149,20 @@ class Karl:
                         issues_num = len(report.issues)
                         if issues_num:
                             self.logger.info("Found %s issue(s)", issues_num)
-                            self.output.send(report, contract_address=address)
+                            self.output.report(report=report, contract_address=address)
 
                             if self.sandbox:
                                 self.logger.info("Firing up sandbox tester")
-                                exploitable = self._run_sandbox(
+                                exploits = self._run_sandbox(
                                     block_number=block.get("number", None),
                                     contract_address=address,
                                     report=report,
                                     rpc=self.web3_rpc,
                                 )
-                                if exploitable:
-                                    # TODO: Nice output
-                                    pass
+                                if len(exploits) > 0:
+                                    self.output.vulnerable(
+                                        exploits=exploits, contract_address=address
+                                    )
                                 else:
                                     pass
                         else:
@@ -208,7 +209,6 @@ class Karl:
     def _run_sandbox(
         self, block_number=None, contract_address=None, report=None, rpc=None
     ):
-        exploitable = False
         try:
             sandbox = Sandbox(
                 block_number=block_number,
@@ -220,6 +220,4 @@ class Karl:
         except SandboxBaseException as e:
             self.logger.error(e)
 
-        exploitable = sandbox.check_exploitability()
-
-        return exploitable
+        return sandbox.check_exploitability()
