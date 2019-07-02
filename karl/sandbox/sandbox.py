@@ -52,9 +52,6 @@ class Sandbox:
         for i in range(0, len(self.report.issues)):
             issue = self.report.sorted_issues()[i]
 
-            if issue["tx_sequence"] == "":
-                continue
-
             if "withdraw its balance" in issue["description"]:
                 vuln_type = "KILL_AND_WITHDRAW"
                 description = (
@@ -67,7 +64,7 @@ class Sandbox:
                 vuln_type = "KILL_ONLY"
                 description = "Anybody can accidentally kill this contract."
 
-            transactions = json.loads(issue["tx_sequence"])
+            transactions = issue["tx_sequence"]
 
             # Build formatted transaction list
             transaction_list = []
@@ -156,7 +153,7 @@ class Sandbox:
                 )
                 v.confirmed = True
                 print(v)
-                exploits.append(v.__dict__)
+                exploits.append(self.report.sorted_issues()[i])
             else:
                 print("Doesn't have more ether after exploit")
 
