@@ -203,7 +203,6 @@ class Karl:
             # modules=["ether_thief", "suicide"],
             modules=[],
             transaction_count=3,
-            verbose_report=True,
         )
 
     def _run_sandbox(
