@@ -200,8 +200,7 @@ class Karl:
         self.logger.debug("Running Mythril")
 
         return analyzer.fire_lasers(
-            modules=["ether_thief", "suicide"],
-            transaction_count=3,
+            modules=["ether_thief", "suicide"], transaction_count=3
         )
 
     def _run_sandbox(
