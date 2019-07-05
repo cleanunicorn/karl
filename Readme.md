@@ -7,7 +7,9 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=cleanunicorn_karl&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=cleanunicorn_karl)
 
-A monitor for smart contracts that checks for security vulnerabilities
+A monitor for smart contracts that checks for security vulnerabilities.
+
+![Karl Vreski](./static/karl-profile.jpg)
 
 ## Install
 
