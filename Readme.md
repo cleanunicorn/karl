@@ -84,7 +84,7 @@ Mythril modules enabled
 ### Running against the **mainnet**
 
 ```console
-$ karl --rpc infura-mainnet --rpctls true
+$ karl --rpc infura-mainnet --rpc_tls true
 Stdout initialized
 Running
 Scraping block 6745471
