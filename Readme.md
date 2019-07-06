@@ -27,7 +27,13 @@ $ npm i -g ganache-cli
 
 ## Demo
 
+Running locally with a specially crafted vulnerable contract:
+
 [![asciicast](https://asciinema.org/a/222983.svg)](https://asciinema.org/a/222983)
+
+Running on the main net using [Infura](https://infura.io/):
+
+[![asciicast](https://asciinema.org/a/atfMqExP6RFXPzeza5adCozpg.svg)](https://asciinema.org/a/atfMqExP6RFXPzeza5adCozpg)
 
 ### Description
 Karl will allow you to monitor a blockchain for vulnerable smart contracts that are being deployed.
@@ -48,45 +54,62 @@ Output can be:
 $ karl --help
 usage: karl.py [-h]
                [--rpc HOST:PORT / ganache / infura-{mainnet, rinkeby, kovan, ropsten}]
-               [--rpctls RPCTLS] [--block NUMBER]
+               [--rpc-tls RPC_TLS] [--block NUMBER]
                [--output Can be one of: stdout, posturl, folder]
-               [--posturl POSTURL] [--folder-output FOLDER_OUTPUT] [--verbose]
+               [--posturl POSTURL] [--folder-output FOLDER_OUTPUT]
+               [--sandbox SANDBOX] [--timeout SECONDS] [--tx-count NUMBER]
+               [--modules [MODULES [MODULES ...]]]
+               [--onchain-storage ONCHAIN_STORAGE]
+               [--max-vm-depth MAX_VM_DEPTH] [--verbose] [--version]
 
 Smart contract monitor using Mythril to find exploits
 
 optional arguments:
   -h, --help            show this help message and exit
+  --version             show program's version number and exit
 
 RPC options:
   --rpc HOST:PORT / ganache / infura-{mainnet, rinkeby, kovan, ropsten}
-                        Custom RPC settings
-  --rpctls RPCTLS       RPC connection over TLS
+                        Custom RPC settings (default: None)
+  --rpc-tls RPC_TLS     RPC connection over TLS (default: False)
   --block NUMBER        Start from this block, otherwise start from latest
+                        (default: None)
 
 Output:
   --output Can be one of: stdout, posturl, folder
-                        Where to send results
+                        Where to send results (default: stdout)
   --posturl POSTURL     Send results to a RESTful url [when using `--output
-                        posturl`]
+                        posturl`] (default: None)
   --folder-output FOLDER_OUTPUT
                         Save files to this folder [when using `--output
-                        folder`]
+                        folder`] (default: None)
+
+Sandbox:
+  --sandbox SANDBOX     Test found transactions in a Ganache sandbox (default:
+                        False)
+
+Scan options:
+  --timeout SECONDS     Scan timeout per contract (default: 600)
+  --tx-count NUMBER     Maximum number of transactions (default: 3)
+  --modules [MODULES [MODULES ...]]
+                        Modules to use for scanning (default: ['ether_thief',
+                        'suicide'])
+  --onchain-storage ONCHAIN_STORAGE
+                        Whether onchain access should be done or not (default:
+                        False)
+  --max-vm-depth MAX_VM_DEPTH
+                        Maximum execution depth for the vm (default: 32)
 
 Verbosity:
-  --verbose, -v         Set verbosity level
+  --verbose, -v         Set verbose (default: 4)
 ```
-
-Mythril modules enabled
-
-- ether_thief
-- suicide
 
 ## Examples
 
 ### Running against the **mainnet**
 
 ```console
-$ karl --rpc infura-mainnet --rpc_tls true
+$ karl --rpc infura-mainnet --rpc-tls true
 Stdout initialized
 Running
 Scraping block 6745471

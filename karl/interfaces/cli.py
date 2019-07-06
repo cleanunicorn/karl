@@ -10,7 +10,8 @@ from karl.karl import Karl
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Smart contract monitor using Mythril to find exploits"
+        description="Smart contract monitor using Mythril to find exploits",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     # Ethereum node
@@ -21,7 +22,7 @@ def main():
         metavar="HOST:PORT / ganache / infura-{mainnet, rinkeby, kovan, ropsten}",
     )
     rpc.add_argument(
-        "--rpc_tls", type=bool, default=False, help="RPC connection over TLS"
+        "--rpc-tls", type=bool, default=False, help="RPC connection over TLS"
     )
     rpc.add_argument(
         "--block",
@@ -54,6 +55,41 @@ def main():
         help="Test found transactions in a Ganache sandbox",
         default=False,
         type=str2bool,
+    )
+
+    # Scan options
+    scan_options = parser.add_argument_group("Scan options")
+    scan_options.add_argument(
+        "--timeout",
+        help="Scan timeout per contract",
+        metavar="SECONDS",
+        default=600,
+        type=int,
+    )
+    scan_options.add_argument(
+        "--tx-count",
+        help="Maximum number of transactions",
+        metavar="NUMBER",
+        default=3,
+        type=int,
+    )
+    scan_options.add_argument(
+        "--modules",
+        help="Modules to use for scanning",
+        nargs="*",
+        default=["ether_thief", "suicide"],
+    )
+    scan_options.add_argument(
+        "--onchain-storage",
+        help="Whether onchain access should be done or not",
+        default=False,
+        type=str2bool,
+    )
+    scan_options.add_argument(
+        "--max-vm-depth",
+        help="Maximum execution depth for the vm",
+        default=32,
+        type=int,
     )
 
     # Verbosity
@@ -120,6 +156,11 @@ def main():
             verbosity=verbosity_levels.get(verbose, verbosity_default),
             block_number=args.block,
             sandbox=args.sandbox,
+            timeout=args.timeout,
+            tx_count=args.tx_count,
+            modules=args.modules,
+            onchain_storage=args.onchain_storage,
+            max_vm_depth=args.max_vm_depth,
         )
         karl.run(forever=True)
     except Exception as e:
