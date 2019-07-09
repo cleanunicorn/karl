@@ -31,8 +31,8 @@ class Karl:
         timeout=600,
         tx_count=3,
         modules=["ether_thief", "selfdestruct"],
-        onchain_storage=False,
-        max_vm_depth=32,
+        onchain_storage=True,
+        loop_bound=3,
     ):
         """
             Initialize Karl with the received parameters
@@ -55,7 +55,7 @@ class Karl:
         self.tx_count = tx_count
         self.modules = modules
         self.onchain_storage = onchain_storage
-        self.max_vm_depth = max_vm_depth
+        self.loop_bound = 3
 
         # ! hack to stop mythril logging
         logging.getLogger("mythril").setLevel(logging.CRITICAL)
@@ -204,7 +204,8 @@ class Karl:
             disassembler=disassembler,
             address=contract_address,
             execution_timeout=self.timeout,
-            max_depth=self.max_vm_depth,
+            loop_bound=self.loop_bound,
+            max_depth=64,
             create_timeout=10,
         )
 

@@ -60,7 +60,7 @@ usage: karl.py [-h]
                [--sandbox SANDBOX] [--timeout SECONDS] [--tx-count NUMBER]
                [--modules [MODULES [MODULES ...]]]
                [--onchain-storage ONCHAIN_STORAGE]
-               [--max-vm-depth MAX_VM_DEPTH] [--verbose] [--version]
+               [--loop bound LOOP_BOUND] [--verbose] [--version]
 
 Smart contract monitor using Mythril to find exploits
 
@@ -96,10 +96,9 @@ Scan options:
                         'suicide'])
   --onchain-storage ONCHAIN_STORAGE
                         Whether onchain access should be done or not (default:
-                        False)
-  --max-vm-depth MAX_VM_DEPTH
-                        Maximum execution depth for the vm (default: 32)
-
+                        True)
+  --loop-bound LOOP_BOUND
+                        Bound on number of loop iterations
 Verbosity:
   --verbose, -v         Set verbose (default: 4)
 ```
