@@ -67,6 +67,13 @@ def main():
         type=int,
     )
     scan_options.add_argument(
+        "--loop-bound",
+        help="Maximum number of loop iterations",
+        metavar="LOOP_BOUND",
+        default=3,
+        type=int,
+    )
+    scan_options.add_argument(
         "--tx-count",
         help="Maximum number of transactions",
         metavar="NUMBER",
@@ -82,14 +89,8 @@ def main():
     scan_options.add_argument(
         "--onchain-storage",
         help="Whether onchain access should be done or not",
-        default=False,
+        default=True,
         type=str2bool,
-    )
-    scan_options.add_argument(
-        "--max-vm-depth",
-        help="Maximum execution depth for the vm",
-        default=32,
-        type=int,
     )
 
     # Verbosity
@@ -160,7 +161,7 @@ def main():
             tx_count=args.tx_count,
             modules=args.modules,
             onchain_storage=args.onchain_storage,
-            max_vm_depth=args.max_vm_depth,
+            loop_bound=args.loop_bound,
         )
         karl.run(forever=True)
     except Exception as e:
