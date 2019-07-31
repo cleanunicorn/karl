@@ -63,6 +63,11 @@ class Karl:
         # Set logging verbosity
         self.logger = logging.getLogger("Karl")
         self.logger.setLevel(verbosity)
+        logger_stream = logging.StreamHandler()
+        logger_stream.setLevel(verbosity)
+        logger_stream.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
+        if self.logger.hasHandlers() is False:
+            self.logger.addHandler(logger_stream)
 
         # Init web3 client
         web3_rpc = None
@@ -183,6 +188,8 @@ class Karl:
                         self.logger.error("Exception: %s\n%s", e, sys.exc_info()[2])
         except Exception as e:
             self.logger.error("Exception: %s\n%s", e, sys.exc_info()[2])
+        except KeyboardInterrupt:
+            self.logger.info("Shutting down.")
 
     def _run_mythril(self, contract_address=None):
         eth_json_rpc = EthJsonRpc(

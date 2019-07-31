@@ -146,13 +146,21 @@ class Sandbox:
             final_balance = w3.eth.getBalance(hacker)
             if final_balance > initial_balance:
                 print("Confirmed vulnerability!")
+                print("========================")
                 print(
-                    "Initial balance = {}, final balance = {}".format(
-                        initial_balance, final_balance
+                    (
+                        "Initial balance = {initial_eth:.2f} ether ({initial_wei} wei)\n"
+                        + "Final balance = {final_eth:.2f} ether ({final_wei} wei)"
+                    ).format(
+                        initial_eth=initial_balance / 10 ** 18,
+                        initial_wei=initial_balance,
+                        final_eth=final_balance / 10 ** 18,
+                        final_wei=final_balance,
                     )
                 )
                 v.confirmed = True
                 print(v)
+                print("========================")
                 exploits.append(self.report.sorted_issues()[i])
             else:
                 print("Doesn't have more ether after exploit")
