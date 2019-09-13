@@ -25,16 +25,6 @@ Install [Ganache](https://truffleframework.com/ganache) with [npm](https://www.n
 $ npm i -g ganache-cli
 ```
 
-## Demo
-
-Running locally with a specially crafted vulnerable contract:
-
-[![asciicast](https://asciinema.org/a/222983.svg)](https://asciinema.org/a/222983)
-
-Running on the main net using [Infura](https://infura.io/):
-
-[![asciicast](https://asciinema.org/a/atfMqExP6RFXPzeza5adCozpg.svg)](https://asciinema.org/a/atfMqExP6RFXPzeza5adCozpg)
-
 ### Description
 Karl will allow you to monitor a blockchain for vulnerable smart contracts that are being deployed.
 
@@ -182,6 +172,16 @@ Connection: close
 ```console
 $ karl --rpc infura-mainnet --output folder
 ```
+
+## Demo
+
+Running locally with a specially crafted vulnerable contract:
+
+[![asciicast](https://asciinema.org/a/222983.svg)](https://asciinema.org/a/222983)
+
+Running on the main net using [Infura](https://infura.io/):
+
+[![asciicast](https://asciinema.org/a/atfMqExP6RFXPzeza5adCozpg.svg)](https://asciinema.org/a/atfMqExP6RFXPzeza5adCozpg)
 
 ## Troubleshooting
 
