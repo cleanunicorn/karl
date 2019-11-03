@@ -199,7 +199,6 @@ class Karl:
         disassembler = MythrilDisassembler(
             eth=eth_json_rpc,
             solc_version=None,
-            solc_args=None,
             enable_online_lookup=True,
         )
 
