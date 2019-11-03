@@ -197,9 +197,7 @@ class Karl:
         )
 
         disassembler = MythrilDisassembler(
-            eth=eth_json_rpc,
-            solc_version=None,
-            enable_online_lookup=True,
+            eth=eth_json_rpc, solc_version=None, enable_online_lookup=True
         )
 
         disassembler.load_from_address(contract_address)
