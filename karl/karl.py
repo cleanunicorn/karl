@@ -4,13 +4,12 @@ import sys
 
 from mythril.mythril import MythrilAnalyzer
 from mythril.mythril import MythrilDisassembler
-from mythril.ethereum.interface.rpc.client import EthJsonRpc
 
 from web3 import Web3
 from karl.exceptions import RPCError
 from karl.sandbox.sandbox import Sandbox
 from karl.sandbox.exceptions import SandboxBaseException
-
+from karl.ethrpcclient.__main__ import EthJsonRpc
 
 logging.basicConfig(level=logging.INFO)
 
@@ -69,7 +68,7 @@ class Karl:
         if self.logger.hasHandlers() is False:
             self.logger.addHandler(logger_stream)
 
-        # Init web3 client
+        # Parse web3 args
         web3_rpc = None
         eth_host = None
         eth_port = None
@@ -78,6 +77,10 @@ class Karl:
             web3_rpc = "http://127.0.0.1:8545"
             eth_host = "127.0.0.1"
             eth_port = "8545"
+        if rpc.startswith("https://mainnet.infura.io"):
+            web3_rpc = rpc
+            eth_host = "mainnet.infura.io"
+            eth_port = "443"
         else:
             infura_network = (
                 rpc.split("infura-")[1] if rpc.startswith("infura-") else None
@@ -102,12 +105,20 @@ class Karl:
                         "'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' "
                         "or HOST:PORT".format(rpc)
                     )
+        # Remove me
+        # web3_rpc = "https://mainnet.infura.io/v3/b7a001b2e2674c46bd21367fb4910b73"
+        # eth_host = "mainnet.infura.io"
+        # eth_port = "443"
+        #
+
         if web3_rpc is None:
             raise RPCError(
                 "Invalid RPC argument provided {}, use "
                 "'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' "
                 "or HOST:PORT".format(rpc)
             )
+
+        # Init web3 client
         self.web3_rpc = web3_rpc
         self.eth_host = eth_host
         self.eth_port = int(eth_port)
@@ -193,7 +204,10 @@ class Karl:
 
     def _run_mythril(self, contract_address=None):
         eth_json_rpc = EthJsonRpc(
-            host=self.eth_host, port=self.eth_port, tls=self.rpc_tls
+            host=self.eth_host,
+            port=self.eth_port,
+            tls=self.rpc_tls,
+            path="/v3/b7a001b2e2674c46bd21367fb4910b73",
         )
 
         disassembler = MythrilDisassembler(
