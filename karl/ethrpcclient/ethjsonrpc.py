@@ -21,10 +21,6 @@ from mythril.ethereum.interface.rpc.exceptions import (
 
 log = logging.getLogger(__name__)
 
-GETH_DEFAULT_RPC_PORT = 8545
-ETH_DEFAULT_RPC_PORT = 8545
-PARITY_DEFAULT_RPC_PORT = 8545
-PYETHAPP_DEFAULT_RPC_PORT = 4000
 MAX_RETRIES = 3
 JSON_MEDIA_TYPE = "application/json"
 
@@ -32,21 +28,14 @@ JSON_MEDIA_TYPE = "application/json"
 class EthJsonRpc(BaseClient):
     """Ethereum JSON-RPC client class."""
 
-    def __init__(
-        self, host="localhost", port=GETH_DEFAULT_RPC_PORT, tls=False, path=None
-    ):
+    def __init__(self, url=None):
         """
 
-        :param host:
-        :param port:
-        :param tls:
+        :param url:
         """
-        self.host = host
-        self.port = port
-        self.path = path
-        self.tls = tls
+        self.url = url
         self.session = requests.Session()
-        self.session.mount(self.host, HTTPAdapter(max_retries=MAX_RETRIES))
+        self.session.mount(self.url, HTTPAdapter(max_retries=MAX_RETRIES))
 
     def _call(self, method, params=None, _id=1):
         """
@@ -58,15 +47,10 @@ class EthJsonRpc(BaseClient):
         """
         params = params or []
         data = {"jsonrpc": "2.0", "method": method, "params": params, "id": _id}
-        scheme = "http"
-        if self.tls:
-            scheme += "s"
-        url = "{}://{}:{}{}".format(scheme, self.host, self.port, self.path)
-        # url = "{}://{}{}".format(scheme, self.host, self.path)
         headers = {"Content-Type": JSON_MEDIA_TYPE}
         log.debug("rpc send: %s" % json.dumps(data))
         try:
-            r = self.session.post(url, headers=headers, data=json.dumps(data))
+            r = self.session.post(self.url, headers=headers, data=json.dumps(data))
         except RequestsConnectionError:
             raise ConnectionError
         if r.status_code / 100 != 2:
