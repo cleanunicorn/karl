@@ -9,14 +9,14 @@ import logging
 
 import requests
 from requests.adapters import HTTPAdapter
-from requests.exceptions import ConnectionError as RequestsConnectionError
+from requests.exceptions import ConnectionError
 
 from mythril.ethereum.interface.rpc.base_client import BaseClient
 from mythril.ethereum.interface.rpc.exceptions import (
     BadJsonError,
     BadResponseError,
     BadStatusCodeError,
-    ConnectionError,
+    ConnectionError as MythrilConnectionError,
 )
 
 log = logging.getLogger(__name__)
@@ -51,8 +51,8 @@ class EthJsonRpc(BaseClient):
         log.debug("rpc send: %s" % json.dumps(data))
         try:
             r = self.session.post(self.url, headers=headers, data=json.dumps(data))
-        except RequestsConnectionError:
-            raise ConnectionError
+        except ConnectionError:
+            raise MythrilConnectionError
         if r.status_code / 100 != 2:
             raise BadStatusCodeError(r.status_code)
         try:
