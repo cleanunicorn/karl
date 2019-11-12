@@ -19,7 +19,7 @@ def main():
     rpc.add_argument(
         "--rpc",
         help="Custom RPC settings",
-        metavar="HOST:PORT / ganache / infura-{mainnet, rinkeby, kovan, ropsten}",
+        metavar="https://mainnet.infura.io/v3/12312312312312312312312312312312",
     )
     rpc.add_argument(
         "--rpc-tls", type=bool, default=False, help="RPC connection over TLS"

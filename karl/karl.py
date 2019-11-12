@@ -1,16 +1,17 @@
 import time
 import logging
 import sys
+import re
+from urllib.parse import urlparse
 
 from mythril.mythril import MythrilAnalyzer
 from mythril.mythril import MythrilDisassembler
-from mythril.ethereum.interface.rpc.client import EthJsonRpc
 
 from web3 import Web3
 from karl.exceptions import RPCError
 from karl.sandbox.sandbox import Sandbox
 from karl.sandbox.exceptions import SandboxBaseException
-
+from karl.ethrpcclient.ethjsonrpc import EthJsonRpc
 
 logging.basicConfig(level=logging.INFO)
 
@@ -69,7 +70,7 @@ class Karl:
         if self.logger.hasHandlers() is False:
             self.logger.addHandler(logger_stream)
 
-        # Init web3 client
+        # Parse web3 args
         web3_rpc = None
         eth_host = None
         eth_port = None
@@ -79,35 +80,29 @@ class Karl:
             eth_host = "127.0.0.1"
             eth_port = "8545"
         else:
-            infura_network = (
-                rpc.split("infura-")[1] if rpc.startswith("infura-") else None
-            )
-            if infura_network in ["mainnet", "rinkeby", "kovan", "ropsten"]:
-                web3_rpc = "https://{net}.infura.io".format(net=infura_network)
-                eth_host = "{net}.infura.io".format(net=infura_network)
-                eth_port = "443"
-                eth_tls = True
-            else:
-                try:
-                    host, port = rpc.split(":")
-                    eth_host = host
-                    eth_port = port
-                    if rpc_tls:
-                        web3_rpc = "https://{host}:{port}".format(host=host, port=port)
-                    else:
-                        web3_rpc = "http://{host}:{port}".format(host=host, port=port)
-                except ValueError:
-                    raise RPCError(
-                        "Invalid RPC argument provided '{}', use "
-                        "'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' "
-                        "or HOST:PORT".format(rpc)
-                    )
+            # Split host and port
+            p = "(?:http.*://)?(?P<host>[^:/ ]+).?(?P<port>[0-9]*).*"
+            m = re.search(p, rpc)
+            eth_host = m.group("host")
+            eth_port = m.group("port")
+
+            if not m.group("port"):
+                o = urlparse(rpc)
+                if o.scheme == "https":
+                    eth_port = "443"
+                else:
+                    eth_port = "80"
+
+            web3_rpc = rpc
+
         if web3_rpc is None:
             raise RPCError(
                 "Invalid RPC argument provided {}, use "
                 "'ganache', 'infura-[mainnet, rinkeby, kovan, ropsten]' "
                 "or HOST:PORT".format(rpc)
             )
+
+        # Init web3 client
         self.web3_rpc = web3_rpc
         self.eth_host = eth_host
         self.eth_port = int(eth_port)
@@ -192,15 +187,10 @@ class Karl:
             self.logger.info("Shutting down.")
 
     def _run_mythril(self, contract_address=None):
-        eth_json_rpc = EthJsonRpc(
-            host=self.eth_host, port=self.eth_port, tls=self.rpc_tls
-        )
+        eth_json_rpc = EthJsonRpc(url=self.web3_rpc)
 
         disassembler = MythrilDisassembler(
-            eth=eth_json_rpc,
-            solc_version=None,
-            solc_args=None,
-            enable_online_lookup=True,
+            eth=eth_json_rpc, solc_version=None, enable_online_lookup=True
         )
 
         disassembler.load_from_address(contract_address)
