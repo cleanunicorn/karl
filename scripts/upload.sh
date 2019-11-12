@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Set TWINE_PASSWORD to the pip password
 
 TEST_REPOSITORY=""
