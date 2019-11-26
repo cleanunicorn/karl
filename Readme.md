@@ -42,15 +42,9 @@ Output can be:
 
 ```console
 $ karl --help
-usage: karl.py [-h]
-               [--rpc HOST:PORT / ganache / infura-{mainnet, rinkeby, kovan, ropsten}]
-               [--rpc-tls RPC_TLS] [--block NUMBER]
-               [--output Can be one of: stdout, posturl, folder]
-               [--posturl POSTURL] [--folder-output FOLDER_OUTPUT]
-               [--sandbox SANDBOX] [--timeout SECONDS] [--tx-count NUMBER]
-               [--modules [MODULES [MODULES ...]]]
-               [--onchain-storage ONCHAIN_STORAGE]
-               [--loop bound LOOP_BOUND] [--verbose] [--version]
+usage: karl [-h] [--rpc https://mainnet.infura.io/v3/12312312312312312312312312312312] [--rpc-tls RPC_TLS] [--block NUMBER] [--output Can be one of: stdout, posturl, folder]
+            [--posturl POSTURL] [--folder-output FOLDER_OUTPUT] [--sandbox SANDBOX] [--timeout SECONDS] [--loop-bound LOOP_BOUND] [--tx-count NUMBER]
+            [--modules [MODULES [MODULES ...]]] [--onchain-storage ONCHAIN_STORAGE] [--verbose] [--version]
 
 Smart contract monitor using Mythril to find exploits
 
@@ -59,36 +53,31 @@ optional arguments:
   --version             show program's version number and exit
 
 RPC options:
-  --rpc HOST:PORT / ganache / infura-{mainnet, rinkeby, kovan, ropsten}
+  --rpc https://mainnet.infura.io/v3/12312312312312312312312312312312
                         Custom RPC settings (default: None)
   --rpc-tls RPC_TLS     RPC connection over TLS (default: False)
-  --block NUMBER        Start from this block, otherwise start from latest
-                        (default: None)
+  --block NUMBER        Start from this block, otherwise start from latest (default: None)
 
 Output:
   --output Can be one of: stdout, posturl, folder
                         Where to send results (default: stdout)
-  --posturl POSTURL     Send results to a RESTful url [when using `--output
-                        posturl`] (default: None)
+  --posturl POSTURL     Send results to a RESTful url [when using `--output posturl`] (default: None)
   --folder-output FOLDER_OUTPUT
-                        Save files to this folder [when using `--output
-                        folder`] (default: None)
+                        Save files to this folder [when using `--output folder`] (default: None)
 
 Sandbox:
-  --sandbox SANDBOX     Test found transactions in a Ganache sandbox (default:
-                        False)
+  --sandbox SANDBOX     Test found transactions in a Ganache sandbox (default: False)
 
 Scan options:
   --timeout SECONDS     Scan timeout per contract (default: 600)
+  --loop-bound LOOP_BOUND
+                        Maximum number of loop iterations (default: 3)
   --tx-count NUMBER     Maximum number of transactions (default: 3)
   --modules [MODULES [MODULES ...]]
-                        Modules to use for scanning (default: ['ether_thief',
-                        'suicide'])
+                        Modules to use for scanning (default: ['ether_thief', 'suicide'])
   --onchain-storage ONCHAIN_STORAGE
-                        Whether onchain access should be done or not (default:
-                        True)
-  --loop-bound LOOP_BOUND
-                        Bound on number of loop iterations
+                        Whether onchain access should be done or not (default: True)
+
 Verbosity:
   --verbose, -v         Set verbose (default: 4)
 ```
@@ -98,7 +87,7 @@ Verbosity:
 ### Running against the **mainnet**
 
 ```console
-$ karl --rpc infura-mainnet --rpc-tls true
+$ karl --rpc https://mainnet.infura.io/
 Stdout initialized
 Running
 Scraping block 6745471
@@ -116,7 +105,7 @@ Analyzing 0x19427b8FD32dfEc78393517Da416bC5C583E6065
 ### Running against **ganache** with **stdout** enabled
 
 ```console
-$ karl --rpc ganache --output=stdout
+$ karl --rpc http://localhost:8545 --output=stdout
 INFO:mythril.mythril:Using RPC settings: ('localhost', 8545, False)
 INFO:mythril.analysis.modules.suicide:Suicide module: Analyzing suicide instruction
 POSSIBLE VULNERABILITY!
@@ -130,7 +119,7 @@ Transactions = [{'from': '0x1dF62f291b2E969fB0849d99D9Ce41e2F137006e', 'to': '0x
 ### Running against **ganache** with **posturl** enabled
 
 ```console
-$ karl --rpc ganache --output=posturl --posturl=http://localhost:8080
+$ karl --rpc [ganache](http://localhost:8545) --output=posturl --posturl=http://localhost:8080
 Posturl initialized
 Running
 Scraping block 5
@@ -170,7 +159,7 @@ Connection: close
 ## Running against the **mainnet** with **folder** output enabled
 
 ```console
-$ karl --rpc infura-mainnet --output folder
+$ karl --rpc karl --rpc https://mainnet.infura.io/ --output folder
 ```
 
 ## Demo
