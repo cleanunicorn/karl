@@ -85,8 +85,5 @@ setup(
     install_requires=read_file("requirements.txt").split("\n"),
     entry_points={"console_scripts": ["karl=karl.interfaces.cli:main"]},
     credits=["Bernhard Mueller <bernhard.mueller@mithril.ai>"],
-    cmdclass={
-        "verify": VerifyVersionCommand,
-        "install": PostInstallCommand,
-    },
+    cmdclass={"verify": VerifyVersionCommand, "install": PostInstallCommand},
 )
