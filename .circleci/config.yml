@@ -36,7 +36,9 @@ jobs:
 
       - run:
           name: Ensuring that setup script is functional
-          command: python3 setup.py install
+          command: |
+            python3 setup.py install
+            karl
           working_directory: ~/karl
 
       - store_test_results:
