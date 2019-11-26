@@ -1,5 +1,6 @@
 include *.py
 include requirements.txt
+include signatures/signatures.db
 
 prune .git
 prune venv
