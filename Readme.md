@@ -9,7 +9,7 @@
 
 A monitor for smart contracts that checks for security vulnerabilities.
 
-<!--![Karl Vreski](./static/karl-profile.jpg)-->
+![Karl Vreski](./static/karl-profile.jpg)
 
 ## Install
 
