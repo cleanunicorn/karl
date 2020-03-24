@@ -31,7 +31,7 @@ class Karl:
         verbosity=logging.INFO,
         timeout=600,
         tx_count=3,
-        modules=["ether_thief", "selfdestruct"],
+        modules=[],
         onchain_storage=True,
         loop_bound=3,
     ):
@@ -197,7 +197,7 @@ class Karl:
 
         analyzer = MythrilAnalyzer(
             strategy="bfs",
-            onchain_storage_access=self.onchain_storage,
+            use_onchain_data=self.onchain_storage,
             disassembler=disassembler,
             address=contract_address,
             execution_timeout=self.timeout,

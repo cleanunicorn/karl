@@ -84,7 +84,7 @@ def main():
         "--modules",
         help="Modules to use for scanning",
         nargs="*",
-        default=["ether_thief", "suicide"],
+        default=[],
     )
     scan_options.add_argument(
         "--onchain-storage",
