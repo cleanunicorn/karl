@@ -81,10 +81,7 @@ def main():
         type=int,
     )
     scan_options.add_argument(
-        "--modules",
-        help="Modules to use for scanning",
-        nargs="*",
-        default=[],
+        "--modules", help="Modules to use for scanning", nargs="*", default=[],
     )
     scan_options.add_argument(
         "--onchain-storage",
