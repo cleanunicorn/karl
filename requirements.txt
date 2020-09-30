@@ -13,4 +13,4 @@ eth-typing>=2.0.0
 eth-utils>=1.0.1
 python-dateutil==2.8.1
 semantic_version==2.8.1
-py-ecc==1.6.0
+py-ecc==5.0.0
