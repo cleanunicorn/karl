@@ -201,6 +201,7 @@ class Karl:
             disassembler=disassembler,
             address=contract_address,
             execution_timeout=self.timeout,
+            solver_timeout=self.timeout,
             loop_bound=self.loop_bound,
             max_depth=64,
             create_timeout=10,
