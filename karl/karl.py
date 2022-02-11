@@ -13,6 +13,8 @@ from karl.sandbox.sandbox import Sandbox
 from karl.sandbox.exceptions import SandboxBaseException
 from karl.ethrpcclient.ethjsonrpc import EthJsonRpc
 
+from web3.middleware import geth_poa_middleware
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -108,6 +110,7 @@ class Karl:
         self.eth_port = int(eth_port)
         self.rpc_tls = eth_tls
         self.web3 = Web3(Web3.HTTPProvider(web3_rpc, request_kwargs={"timeout": 60}))
+        self.web3.middleware_stack.inject(geth_poa_middleware, layer=0)
         if self.web3 is None:
             raise RPCError(
                 "Invalid RPC argument provided {}, use "
