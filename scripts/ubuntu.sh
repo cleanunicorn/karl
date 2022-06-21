@@ -1,7 +1,9 @@
 #!/bin/bash
 
 apt update
-apt install -y python3 python3-pip libssl-dev
+apt upgrade
+apt install -y python3 python3-pip libssl-dev 
+pip3 install maturin
 
 pip3 install -e .
 karl --help
