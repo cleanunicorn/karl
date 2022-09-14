@@ -11,6 +11,10 @@ A monitor for smart contracts that checks for security vulnerabilities.
 
 ![Karl Vreski](./static/karl-profile.jpg)
 
+## Video presentation
+
+[DefCon 27](https://www.youtube.com/watch?v=Qd9ubry-c_M)
+
 ## Install
 
 Get latest version of Karl.
