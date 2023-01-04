@@ -1,5 +1,7 @@
 # Karl
 
+**Obsolete, not maintained anymore, don't install it, don't use it, you were warned!**
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![CircleCI](https://circleci.com/gh/cleanunicorn/karl/tree/master.svg?style=shield)](https://circleci.com/gh/cleanunicorn/karl)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/53bb3ba0ed50447698e775edd397baa7)](https://www.codacy.com/app/lucadanielcostin/karl)
