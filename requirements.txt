@@ -8,7 +8,7 @@ eth-hash>=0.1.0
 eth-keyfile>=0.5.1
 eth-keys>=0.2.0b3,<0.3.0
 eth-rlp>=0.1.0
-eth-tester==0.1.0b32
+eth-tester==0.12.0b2
 eth-typing>=2.0.0
 eth-utils>=1.0.1
 python-dateutil==2.8.1
